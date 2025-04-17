@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AssemblyConfig(AppConfig):
+class ReunionConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'assembly'
+    name = 'reunion'
