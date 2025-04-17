@@ -33,7 +33,7 @@ class Reuniao(models.Model):
     )
 
     def __str__(self):
-        return f"Reunião em {self.data} - {self.texto}"
+        return f"{self.data.strftime('%d de %B')} | {self.texto}"
 
 
 class Trecho(models.Choices):
