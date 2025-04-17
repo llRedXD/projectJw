@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from designation.models import Reuniao
+from designation.models import Parte, Reuniao
 
 
 def index(request):
@@ -10,4 +10,5 @@ def index(request):
 
 def reuniao(request, reuniao_id):
     reuniao = Reuniao.objects.get(id=reuniao_id)
-    return render(request, "reuniao.html", {"reuniao": reuniao})
+    partes = Parte.objects.filter(reuniao=reuniao)
+    return render(request, "reuniao.html", {"reuniao": reuniao, "partes": partes})

@@ -6,7 +6,17 @@
     <title>Reunião Details</title>
 </head>
 <body>
-    {{reuniao}}
-    {{reuniao.presidente}}
+    <div>
+        {{reuniao}}
+        <p>Presidente: {{reuniao.presidente}}</p>
+        <p>Conselheiro Sala B: {{reuniao.conselheiro_sala_b}}</p>
+        <p>Cantico {{reuniao.cantico_inicial}}</p>
+        <p>Oração {{reuniao.oracao_inicial}}</p>
+    </div>
+    <div>
+        <h3>Tesouros da Palavra de Deus</h3>
+        {{partes}}
+    </div>
+
 </body>
 </html>
