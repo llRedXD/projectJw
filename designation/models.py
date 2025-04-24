@@ -52,7 +52,34 @@ class Parte(models.Model):
     nome_parte = models.CharField(max_length=100)
     ponto_parte = models.CharField(max_length=100, blank=True, null=True)
     duracao = models.PositiveIntegerField()
-    sala_b = models.BooleanField(default=False)
+    pessoa = models.ForeignKey(
+        Pessoa,
+        on_delete=models.CASCADE,
+        related_name="parte",
+        blank=True,
+        null=True,
+    )
+    ajudante = models.ForeignKey(
+        Pessoa,
+        on_delete=models.CASCADE,
+        related_name="ajudante",
+        blank=True,
+        null=True,
+    )
+    pessoa_b = models.ForeignKey(
+        Pessoa,
+        on_delete=models.CASCADE,
+        related_name="pessoa_b",
+        blank=True,
+        null=True,
+    )
+    ajudante_b = models.ForeignKey(
+        Pessoa,
+        on_delete=models.CASCADE,
+        related_name="ajudante_b",
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f"Parte {self.numero_parte} - {self.nome_parte} ({self.reuniao.data})"
@@ -61,22 +88,4 @@ class Parte(models.Model):
         unique_together = (
             "reuniao",
             "numero_parte",
-            "sala_b",
-        )
-
-
-class Designacao(models.Model):
-    parte = models.ForeignKey(Parte, on_delete=models.CASCADE)
-    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
-    ajudante = models.ForeignKey(
-        Pessoa,
-        on_delete=models.CASCADE,
-        related_name="ajudante",
-        blank=True,
-        null=True,
-    )
-
-    def __str__(self):
-        return (
-            f"{self.pessoa.nome} - {self.parte.nome_parte} ({self.parte.reuniao.data})"
         )

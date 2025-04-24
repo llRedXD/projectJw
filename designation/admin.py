@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from .models import Pessoa, Reuniao, Parte, Designacao
+from .models import Pessoa, Reuniao, Parte
 from .extra import ComboBoxWidget
 
 
@@ -52,7 +52,6 @@ class ParteInline(admin.TabularInline):
         "nome_parte",
         "ponto_parte",
         "duracao",
-        "sala_b",
     )
     form = ParteForm
     show_change_link = True
@@ -94,14 +93,6 @@ class ParteAdmin(admin.ModelAdmin):
         "nome_parte",
         "ponto_parte",
         "duracao",
-        "sala_b",
     )
     search_fields = ("reuniao__data", "nome_parte")
-    list_filter = ("reuniao", "sala_b")
-
-
-@admin.register(Designacao)
-class DesignacaoAdmin(admin.ModelAdmin):
-    list_display = ("parte", "pessoa")
-    search_fields = ("parte__nome_parte", "pessoa__nome")
-    list_filter = ("parte", "pessoa")
+    list_filter = ("reuniao",)
