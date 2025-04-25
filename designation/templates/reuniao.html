@@ -76,9 +76,41 @@
                     </tr>
                     {% endfor %}
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="7" style="text-align:center">
+                            <button type="button" id="btn-add-parte">Adicionar parte</button>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
         </form>
     </div>
 
 </body>
+
+<script>
+    // serializa o <option> de Pessoa B e Pessoa a partir de uma das linhas já existentes
+    const optsPessoaB = document.querySelector('select[name^="partes-"]').innerHTML;
+    const optsPessoa = document.querySelectorAll('select[name^="partes-"]')[1].innerHTML;
+
+    document.getElementById('btn-add-parte')
+        .addEventListener('click', () => {
+            const tbody = document.querySelector('table tbody');
+            const novaLinha = document.createElement('tr');
+            novaLinha.innerHTML = `
+      <td><input type="number" name="new_numero_parte" style="width:3em" /></td>
+      <td><input type="text"   name="new_nome_parte"   /></td>
+      <td><input type="number" name="new_duracao"       style="width:4em" /></td>
+      <td><select name="new_pessoa_b">${optsPessoaB}</select></td>
+      <td><input type="text"   name="new_ponto_parte"   /></td>
+      <td><select name="new_pessoa">${optsPessoa}</select></td>
+      <td><button  name="create_new">Criar</button></td>
+    `;
+            tbody.appendChild(novaLinha);
+        });
+    
+    // Adiciona o evento de clique ao botão "Criar" para cada nova linha
+    
+</script>
 </html>
