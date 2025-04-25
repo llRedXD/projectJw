@@ -10,12 +10,74 @@
         {{reuniao}}
         <p>Presidente: {{reuniao.presidente}}</p>
         <p>Conselheiro Sala B: {{reuniao.conselheiro_sala_b}}</p>
-        <p>Cantico {{reuniao.cantico_inicial}}</p>
-        <p>Oração {{reuniao.oracao_inicial}}</p>
+        <p>Cantico: {{reuniao.cantico_inicial}}</p>
+        <p>Oração: {{reuniao.oracao_inicial}}</p>
     </div>
     <div>
-        <h3>Tesouros da Palavra de Deus</h3>
-        {{partes}}
+        <form method="post" action="{% url 'reuniao_update_partes' reuniao.pk %}">
+            {% csrf_token %}
+            <h3>Tesouros da Palavra de Deus</h3>
+            <table border="1" cellpadding="6" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Nome</th>
+                        <th>Duração</th>
+                        <th>Pessoa B</th>
+                        <th>Ponto</th>
+                        <th>Pessoa</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for parte in tesouros %}
+                    <tr>
+                        <td>
+                            <input type="number" name="partes-{{ parte.pk }}-numero_parte" value="{{ parte.numero_parte }}"
+                                style="width:3em" />
+                        </td>
+                        <td>
+                            <input type="text" name="partes-{{ parte.pk }}-nome_parte" value="{{ parte.nome_parte }}" />
+                        </td>
+                        <td>
+                            <input type="number" name="partes-{{ parte.pk }}-duracao" value="{{ parte.duracao }}"
+                                style="width:4em" />
+                        </td>
+                        <td>
+                            <select name="partes-{{ parte.pk }}-pessoa_b">
+                                {% for pessoa_b in pessoas %}
+                                <option value="{{ pessoa_b.pk }}"
+                                    {% if parte.pessoa_b_id == pessoa_b.pk %}selected{% endif %}>
+                                    {{ pessoa_b.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="partes-{{ parte.pk }}-ponto_parte" value="{{ parte.ponto_parte }}" />
+                        </td>
+                        <td>
+                            <select name="partes-{{ parte.pk }}-pessoa">
+                                {% for pessoa in pessoas %}
+                                <option value="{{ pessoa.pk }}"
+                                    {% if parte.pessoa_id == pessoa.pk %}selected{% endif %}>
+                                    {{ pessoa.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <button type="submit" name="confirmar_pk" value="{{ parte.pk }}">Confirmar</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">Nenhuma parte cadastrada.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
     </div>
 
 </body>

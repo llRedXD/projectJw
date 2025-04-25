@@ -52,6 +52,10 @@ class ParteInline(admin.TabularInline):
         "nome_parte",
         "ponto_parte",
         "duracao",
+        "pessoa",
+        "ajudante",
+        "pessoa_b",
+        "ajudante_b",
     )
     form = ParteForm
     show_change_link = True
@@ -70,12 +74,15 @@ class ReuniaoAdmin(admin.ModelAdmin):
                     "data",
                     "texto",
                     "cantico_inicial",
+                    "oracao_inicial",
+                    "cantico_meio",
+                    "cantico_final",
+                    "oracao_final",
                     "presidente",
                     "conselheiro_sala_b",
                 )
             },
         ),
-        # ("Tesouros da Palavra de Deus", {"fields": ("cantico_meio", "oracao_inicial")}),
     )
     inlines = [
         ParteInline,
