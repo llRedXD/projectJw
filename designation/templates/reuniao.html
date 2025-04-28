@@ -1,132 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <title>Reunião Details</title>
 </head>
-<body>
-    <div>
-        {{reuniao}}
-        <p>Presidente: {{reuniao.presidente}}</p>
-        <p>Conselheiro Sala B: {{reuniao.conselheiro_sala_b}}</p>
-        <p>Cantico: {{reuniao.cantico_inicial}}</p>
-        <p>Oração: {{reuniao.oracao_inicial}}</p>
+
+<body class="bg-zinc-500">
+    <div class="grid grid-cols-3">
+        <div class="col-span-2 text-2xl font-medium">
+            {{ reuniao.data|date:"d \D\E F"|upper}} | {{ reuniao.texto|upper}}
+        </div>
+        <div class="col-span-1">
+            <span class="font-medium ">
+                Presidente: 
+            </span>
+            {{reuniao.presidente}}
+        </div>
+        <span class="col-span-1 col-end-4">Conselheiro Sala B: {{reuniao.conselheiro_sala_b}}</span>
+        <span class="col-span-1">Cantico: {{reuniao.cantico_inicial}}</span>
+        <span class="col-span-1 col-end-4">Oração: {{reuniao.oracao_inicial}}</span>
     </div>
     <div>
-        <h3>Tesouros da Palavra de Deus</h3>
+        <h3 class="text-2xl font-medium bg-[var(--color-tesouro)]">Tesouros da Palavra de Deus</h3>
+        <div class="grid grid-cols-12 gap-2 m-2">
 
-        <!-- <form method="post" action="{% url 'reuniao_update_partes' reuniao.pk %}">
-            {% csrf_token %}
-            <table border="1" cellpadding="6" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Nº</th>
-                        <th>Nome</th>
-                        <th>Duração</th>
-                        <th>Pessoa B</th>
-                        <th>Ponto</th>
-                        <th>Pessoa</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for parte in tesouros %}
-                    <tr>
-                        <td>
-                            <input type="number" name="partes-{{ parte.pk }}-numero_parte" value="{{ parte.numero_parte }}"
-                                style="width:3em" />
-                        </td>
-                        <td>
-                            <input type="text" name="partes-{{ parte.pk }}-nome_parte" value="{{ parte.nome_parte }}" />
-                        </td>
-                        <td>
-                            <input type="number" name="partes-{{ parte.pk }}-duracao" value="{{ parte.duracao }}"
-                                style="width:4em" />
-                        </td>
-                        <td>
-                            <select name="partes-{{ parte.pk }}-pessoa_b">
-                                {% for pessoa_b in pessoas %}
-                                <option value="{{ pessoa_b.pk }}"
-                                    {% if parte.pessoa_b_id == pessoa_b.pk %}selected{% endif %}>
-                                    {{ pessoa_b.nome }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td>
-                            <input type="text" name="partes-{{ parte.pk }}-ponto_parte" value="{{ parte.ponto_parte }}" />
-                        </td>
-                        <td>
-                            <select name="partes-{{ parte.pk }}-pessoa">
-                                {% for pessoa in pessoas %}
-                                <option value="{{ pessoa.pk }}"
-                                    {% if parte.pessoa_id == pessoa.pk %}selected{% endif %}>
-                                    {{ pessoa.nome }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td>
-                            <button type="submit" name="confirmar_pk" value="{{ parte.pk }}">Confirmar</button>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="7">Nenhuma parte cadastrada.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="7" style="text-align:center">
-                            <button type="button" id="btn-add-parte">Adicionar parte</button>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-        </form> -->
+            <!-- Cabeçalho -->
+            <div class="col-span-1">Nº Parte</div>
+            <div class="col-span-3">Nome Parte</div>
+            <div class="col-span-1">Duração</div>
+            <div class="col-span-2">Sala B</div>
+            <div class="col-span-2">Sala Principal</div>
+            <div class="col-span-1">Ponto</div>
+            <div class="col-span-1 col-end-13"></div>
+
+            <!-- Dados -->
+            <form class="contents" method="post" action="{% url 'update_parte' reuniao.pk %}">
+            {% for parte in tesouros %}
+                {% csrf_token %}
+                <input class="col-span-1 rounded " type="number" name="partes-{{ parte.pk }}-numero_parte" value="{{ parte.numero_parte }}" />
+                <input class="col-span-3 rounded" type="text" name="partes-{{ parte.pk }}-nome_parte" value="{{ parte.nome_parte }}" />
+                <input class="col-span-1 rounded" type="number" name="partes-{{ parte.pk }}-duracao" value="{{ parte.duracao }}" />
+                <div class="col-span-2 flex">
+
+                    <select class="rounded" name="partes-{{ parte.pk }}-pessoa_b">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for pessoa_b in pessoas %}  
+                        <option value="{{ pessoa_b.pk }}"
+                            {% if parte.pessoa_b_id == pessoa_b.pk %}selected{% endif %}>
+                            {{ pessoa_b.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-pessoa_b')">Limpar</button>
+                </div>
+                <div class="col-span-2 flex">
+                    <select class="rounded" name="partes-{{ parte.pk }}-pessoa">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for pessoa in pessoas %}  
+                        <option value="{{ pessoa.pk }}"
+                            {% if parte.pessoa_id == pessoa.pk %}selected{% endif %}>
+                            {{ pessoa.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-pessoa')">Limpar</button>
+                </div>
+                <div class="col-span-1 flex">
+                    <span class="me-1">(</span>
+                    <input class="rounded" type="number" name="partes-{{ parte.pk }}-ponto" value="{{ parte.ponto }}" />
+                    <span class="ms-1">)</span>
+                </div>
+                <div class="col-span-1 col-end-13">
+                    <button class="bg-[var(--color-tesouro)] rounded px-2 py-1" name="confirmar_pk" value="{{ parte.pk }}" type="submit">Salvar</button>
+                    <button class="bg-red-600 rounded px-2 py-1" type="submit" formaction="{% url 'delete_parte' parte.pk %}">Deletar</button>
+                    <!-- <button type="submit" name="confirmar_pk" value="{{ parte.pk }}">Confirmar</button> -->
+                </div>
+                {% endfor %}
+            </form>
+            <form class="contents" method="post" action="{% url 'create_parte'  reuniao.pk%}">
+                {% csrf_token %}
+                <input type="text" name="trecho" value="Tesouros da Palavra de Deus" hidden>
+                <input class="col-span-1 rounded" type="number" name="numero_parte" value="" />
+                <input class="col-span-3 rounded" type="text" name="nome_parte" value="" />
+                <input class="col-span-1 rounded" type="number" name="duracao" value="" />
+                <div class="col-span-2 flex">
+                    <select class="rounded" name="pessoa_b">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for pessoa_b in pessoas %}  
+                        <option value="{{ pessoa_b.pk }}">
+                            {{ pessoa_b.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('pessoa_b')">Limpar</button>
+                </div>
+                <div class="col-span-2 flex">
+                    <select class="rounded" name="pessoa">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for pessoa in pessoas %}  
+                        <option value="{{ pessoa.pk }}">
+                            {{ pessoa.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('pessoa')">Limpar</button>
+                </div>
+                <div class="col-span-1 flex">
+                    <span class="me-1">(</span>
+                    <input class="rounded" type="number" name="ponto" value="" />
+                    <span class="ms-1">)</span>
+                </div>
+                <div class="col-span-1 col-end-13">
+                    <button class="bg-[var(--color-tesouro)] rounded px-2 py-1" type="submit">Adicionar</button>
+                </div>
+            </form>
+        </div>
+
     </div>
 
 </body>
 
 <script>
-    // serializa o <option> de Pessoa B e Pessoa a partir de uma das linhas já existentes
-    const optsPessoaB = document.querySelector('select[name^="partes-"]').innerHTML;
-    const optsPessoa = document.querySelectorAll('select[name^="partes-"]')[1].innerHTML;
-
-    document.getElementById('btn-add-parte')
-        .addEventListener('click', () => {
-            const tbody = document.querySelector('table tbody');
-            const novaLinha = document.createElement('tr');
-            novaLinha.innerHTML = `
-      <td><input type="number" name="new_numero_parte" style="width:3em" /></td>
-      <td><input type="text"   name="new_nome_parte"   /></td>
-      <td><input type="number" name="new_duracao"       style="width:4em" /></td>
-      <td><select name="new_pessoa_b">${optsPessoaB}</select></td>
-      <td><input type="text"   name="new_ponto_parte"   /></td>
-      <td><select name="new_pessoa">${optsPessoa}</select></td>
-      <td><button  name="create_new">Criar</button></td>
-    `;
-            tbody.appendChild(novaLinha);
-        });
-    
-    // Adiciona o evento de clique ao botão "Criar" para cada nova linha
-    document.querySelectorAll('button[name="create_new"]').forEach(button => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault(); // Impede o envio do formulário padrão
-            const linha = event.target.closest('tr');
-            const numeroParte = linha.querySelector('input[name^="new_numero_parte"]').value;
-            const nomeParte = linha.querySelector('input[name^="new_nome_parte"]').value;
-            const duracao = linha.querySelector('input[name^="new_duracao"]').value;
-            const pessoaB = linha.querySelector('select[name^="new_pessoa_b"]').value;
-            const pontoParte = linha.querySelector('input[name^="new_ponto_parte"]').value;
-            const pessoa = linha.querySelector('select[name^="new_pessoa"]').value;
-
-            // Aqui você pode fazer o que quiser com os dados, como enviar para o servidor via AJAX
-            console.log({ numeroParte, nomeParte, duracao, pessoaB, pontoParte, pessoa });
-        });
-    });
+    const limpar_campo_pessoa = (target) => {
+        const select = document.querySelector(`[name="${target}"]`);
+        select.value = 0;
+    }
 </script>
+
 </html>
