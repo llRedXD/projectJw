@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>Reunião Details</title>
 </head>
 <body>
@@ -14,9 +15,10 @@
         <p>Oração: {{reuniao.oracao_inicial}}</p>
     </div>
     <div>
-        <form method="post" action="{% url 'reuniao_update_partes' reuniao.pk %}">
+        <h3>Tesouros da Palavra de Deus</h3>
+
+        <!-- <form method="post" action="{% url 'reuniao_update_partes' reuniao.pk %}">
             {% csrf_token %}
-            <h3>Tesouros da Palavra de Deus</h3>
             <table border="1" cellpadding="6" cellspacing="0">
                 <thead>
                     <tr>
@@ -84,7 +86,7 @@
                     </tr>
                 </tfoot>
             </table>
-        </form>
+        </form> -->
     </div>
 
 </body>
@@ -111,6 +113,20 @@
         });
     
     // Adiciona o evento de clique ao botão "Criar" para cada nova linha
-    
+    document.querySelectorAll('button[name="create_new"]').forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault(); // Impede o envio do formulário padrão
+            const linha = event.target.closest('tr');
+            const numeroParte = linha.querySelector('input[name^="new_numero_parte"]').value;
+            const nomeParte = linha.querySelector('input[name^="new_nome_parte"]').value;
+            const duracao = linha.querySelector('input[name^="new_duracao"]').value;
+            const pessoaB = linha.querySelector('select[name^="new_pessoa_b"]').value;
+            const pontoParte = linha.querySelector('input[name^="new_ponto_parte"]').value;
+            const pessoa = linha.querySelector('select[name^="new_pessoa"]').value;
+
+            // Aqui você pode fazer o que quiser com os dados, como enviar para o servidor via AJAX
+            console.log({ numeroParte, nomeParte, duracao, pessoaB, pontoParte, pessoa });
+        });
+    });
 </script>
 </html>
