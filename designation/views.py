@@ -40,37 +40,41 @@ def update_parte(request, pk):
             parte.nome_parte = request.POST.get(
                 f"partes-{confirm_pk}-nome_parte", parte.nome_parte
             )
-            # Converter string para int, se existir
-            dur = request.POST.get(f"partes-{confirm_pk}-duracao")
-            if dur:
-                parte.duracao = int(dur)
-            pessoa_b = request.POST.get(f"partes-{confirm_pk}-pessoa_b")
-            if pessoa_b == "":
-                parte.pessoa_b = None
-            parte.pessoa_b = Pessoa.objects.filter(pk=pessoa_b).first()
+            parte.duracao = (
+                int(request.POST.get(f"partes-{confirm_pk}-duracao"))
+                if request.POST.get(f"partes-{confirm_pk}-duracao")
+                else 0
+            )
+            parte.pessoa_b = get_pessoa(
+                request.POST.get(f"partes-{confirm_pk}-pessoa_b")
+            )
+            parte.ajudante_b = get_pessoa(
+                request.POST.get(f"partes-{confirm_pk}-ajudante_b")
+            )
+            parte.pessoa = get_pessoa(request.POST.get(f"partes-{confirm_pk}-pessoa"))
+            parte.ajudante = get_pessoa(
+                request.POST.get(f"partes-{confirm_pk}-ajudante")
+            )
             parte.ponto_parte = request.POST.get(
                 f"partes-{confirm_pk}-ponto_parte", parte.ponto_parte
             )
-            pessoa = request.POST.get(f"partes-{confirm_pk}-pessoa")
-            pessoa = Pessoa.objects.filter(pk=pessoa).first()
-            parte.pessoa = pessoa
             parte.save()
         return redirect("reuniao", reuniao.pk)
+
+
+def get_pessoa(id):
+    try:
+        pessoa = Pessoa.objects.get(pk=id)
+    except Pessoa.DoesNotExist:
+        return None
+    return pessoa
 
 
 def create_parte(request, pk):
     if request.method == "POST":
         reuniao = get_object_or_404(Reuniao, pk=pk)
-        pessoa_id = request.POST.get("pessoa")
-        if pessoa_id == "":
-            pessoa = None
-        else:
-            pessoa = Pessoa.objects.filter(pk=pessoa_id).first()
-        pessoa_b_id = request.POST.get("pessoa_b")
-        if pessoa_b_id == "":
-            pessoa_b = None
-        else:
-            pessoa_b = Pessoa.objects.filter(pk=pessoa_b_id).first()
+        pessoa = get_pessoa(request.POST.get("pessoa"))
+        pessoa_b = get_pessoa(request.POST.get("pessoa_b"))
 
         parte = Parte(
             reuniao=reuniao,
@@ -78,7 +82,9 @@ def create_parte(request, pk):
             trecho=request.POST.get("trecho"),
             nome_parte=request.POST.get("nome_parte"),
             ponto_parte=request.POST.get("ponto_parte"),
-            duracao=int(request.POST.get("duracao")),
+            duracao=int(request.POST.get("duracao"))
+            if request.POST.get("duracao")
+            else 0,
             pessoa=pessoa,
             pessoa_b=pessoa_b,
         )

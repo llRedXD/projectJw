@@ -45,7 +45,6 @@
                 <input class="col-span-3 rounded" type="text" name="partes-{{ parte.pk }}-nome_parte" value="{{ parte.nome_parte }}" />
                 <input class="col-span-1 rounded" type="number" name="partes-{{ parte.pk }}-duracao" value="{{ parte.duracao }}" />
                 <div class="col-span-2 flex">
-
                     <select class="rounded" name="partes-{{ parte.pk }}-pessoa_b">
                         <option value="0" selected hidden>Selecione uma pessoa</option>
                         {% for pessoa_b in pessoas %}  
@@ -71,13 +70,12 @@
                 </div>
                 <div class="col-span-1 flex">
                     <span class="me-1">(</span>
-                    <input class="rounded" type="number" name="partes-{{ parte.pk }}-ponto" value="{{ parte.ponto }}" />
+                    <input class="rounded" type="number" name="partes-{{ parte.pk }}-ponto_parte" value="{{ parte.ponto_parte }}" />
                     <span class="ms-1">)</span>
                 </div>
                 <div class="col-span-1 col-end-13">
                     <button class="bg-[var(--color-tesouro)] rounded px-2 py-1" name="confirmar_pk" value="{{ parte.pk }}" type="submit">Salvar</button>
                     <button class="bg-red-600 rounded px-2 py-1" type="submit" formaction="{% url 'delete_parte' parte.pk %}">Deletar</button>
-                    <!-- <button type="submit" name="confirmar_pk" value="{{ parte.pk }}">Confirmar</button> -->
                 </div>
                 {% endfor %}
             </form>
