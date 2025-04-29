@@ -14,6 +14,9 @@ def reuniao(request, reuniao_id):
     partes_tesouros = partes.filter(trecho="Tesouros da Palavra de Deus").order_by(
         "numero_parte"
     )
+    partes_ministerio = partes.filter(trecho="Faça seu Melhor no Ministério").order_by(
+        "numero_parte"
+    )
     pessoas = Pessoa.objects.all()
     return render(
         request,
@@ -21,8 +24,9 @@ def reuniao(request, reuniao_id):
         {
             "reuniao": reuniao,
             "partes": partes,
-            "tesouros": partes_tesouros,
             "pessoas": pessoas,
+            "tesouros": partes_tesouros,
+            "ministerio": partes_ministerio,
         },
     )
 

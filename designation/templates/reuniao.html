@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -73,7 +73,7 @@
                     <input class="rounded" type="number" name="partes-{{ parte.pk }}-ponto_parte" value="{{ parte.ponto_parte }}" />
                     <span class="ms-1">)</span>
                 </div>
-                <div class="col-span-1 col-end-13">
+                <div class="col-span-1 col-end-13 justify-self-end">
                     <button class="bg-[var(--color-tesouro)] rounded px-2 py-1" name="confirmar_pk" value="{{ parte.pk }}" type="submit">Salvar</button>
                     <button class="bg-red-600 rounded px-2 py-1" type="submit" formaction="{% url 'delete_parte' parte.pk %}">Deletar</button>
                 </div>
@@ -112,14 +112,148 @@
                     <input class="rounded" type="number" name="ponto" value="" />
                     <span class="ms-1">)</span>
                 </div>
-                <div class="col-span-1 col-end-13">
+                <div class="col-span-1 col-end-13 justify-self-end">
                     <button class="bg-[var(--color-tesouro)] rounded px-2 py-1" type="submit">Adicionar</button>
                 </div>
             </form>
         </div>
-
     </div>
+    <div>
+        <h3 class="text-2xl font-medium bg-[var(--color-minesterio)]">Faça seu Melhor no Ministério</h3>
+        <div class="grid grid-cols-[repeat(16,minmax(0,1fr))] gap-2 m-2">
 
+            <!-- Cabeçalho -->
+            <div class="col-span-1">Nº Parte</div>
+            <div class="col-span-2">Nome Parte</div>
+            <div class="col-span-1">Duração</div>
+            <div class="col-span-4">Sala B</div>
+            <div class="col-span-4">Sala Principal</div>
+            <div class="col-span-2">Ponto</div>
+            <div class="col-span-2 col-end-16"></div> 
+
+            <!-- Dados -->
+            <form class="contents" method="post" action="{% url 'update_parte' reuniao.pk %}">
+            {% for parte in ministerio %}
+                {% csrf_token %}
+                <input class="col-span-1 rounded " type="number" name="partes-{{ parte.pk }}-numero_parte" value="{{ parte.numero_parte }}" />
+                <input class="col-span-2 rounded" type="text" name="partes-{{ parte.pk }}-nome_parte" value="{{ parte.nome_parte }}" />
+                <input class="col-span-1 rounded" type="number" name="partes-{{ parte.pk }}-duracao" value="{{ parte.duracao }}" />
+                <div class="col-span-4 flex">
+                    <select class="rounded" name="partes-{{ parte.pk }}-pessoa_b">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for pessoa_b in pessoas %}  
+                        <option value="{{ pessoa_b.pk }}"
+                            {% if parte.pessoa_b_id == pessoa_b.pk %}selected{% endif %}>
+                            {{ pessoa_b.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-pessoa_b')">Limpar</button>
+                    <select class="rounded ms-1" name="partes-{{ parte.pk }}-ajudante_b">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for ajudante_b in pessoas %}  
+                        <option value="{{ ajudante_b.pk }}"
+                            {% if parte.ajudante_b_id == ajudante_b.pk %}selected{% endif %}>
+                            {{ ajudante_b.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-ajudante_b')">Limpar</button>
+                </div>
+                <div class="col-span-4 flex">
+                    <select class="rounded" name="partes-{{ parte.pk }}-pessoa">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for pessoa in pessoas %}  
+                        <option value="{{ pessoa.pk }}"
+                            {% if parte.pessoa_id == pessoa.pk %}selected{% endif %}>
+                            {{ pessoa.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-pessoa')">Limpar</button>
+                    <select class="rounded ms-1" name="partes-{{ parte.pk }}-ajudante">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for ajudante in pessoas %}  
+                        <option value="{{ ajudante.pk }}"
+                            {% if parte.ajudante_id == ajudante.pk %}selected{% endif %}>
+                            {{ ajudante.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-ajudante')">Limpar</button>
+                </div>
+                <div class="flex col-span-2 ">
+                    <span class="me-1">(</span>
+                    <input class="rounded" type="number" name="partes-{{ parte.pk }}-ponto_parte"
+                        value="{{ parte.ponto_parte }}" />
+                    <span class="ms-1">)</span>
+                </div>
+                <div class="col-span-2 col-end-16 justify-self-end">
+                    <button class="bg-[var(--color-minesterio)] rounded px-2 py-1" name="confirmar_pk" value="{{ parte.pk }}" type="submit">Salvar</button>
+                    <button class="bg-red-600 rounded px-2 py-1" type="submit" formaction="{% url 'delete_parte' parte.pk %}">Deletar</button>
+                </div>
+                {% endfor %}
+            </form>
+
+            <!-- Adicionar Parte -->
+            <form class="contents" method="post" action="{% url 'create_parte'  reuniao.pk%}">
+                {% csrf_token %}
+                <input type="text" name="trecho" value="Faça seu Melhor no Ministério" hidden>
+                <input class="col-span-1 rounded" type="number" name="numero_parte" value="" />
+                <input class="col-span-2 rounded" type="text" name="nome_parte" value="" />
+                <input class="col-span-1 rounded" type="number" name="duracao" value="" />
+                <div class="col-span-4 flex">
+                    <select class="rounded" name="pessoa_b">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for pessoa_b in pessoas %}  
+                        <option value="{{ pessoa_b.pk }}">
+                            {{ pessoa_b.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('pessoa_b')">Limpar</button>
+                    <select class="rounded ms-1" name="ajudante_b">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for ajudante_b in pessoas %}  
+                        <option value="{{ ajudante_b.pk }}">
+                            {{ ajudante_b.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('ajudante_b')">Limpar</button>
+                </div>
+                <div class="col-span-4 flex">
+                    <select class="rounded" name="pessoa">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for pessoa in pessoas %}  
+                        <option value="{{ pessoa.pk }}">
+                            {{ pessoa.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('pessoa')">Limpar</button>
+                    <select class="rounded ms-1" name="ajudante">
+                        <option value="0" selected hidden>Selecione uma pessoa</option>
+                        {% for ajudante in pessoas %}
+                        <option value="{{ ajudante.pk }}">
+                            {{ ajudante.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('ajudante')">Limpar</button>
+                </div>
+                <div class="flex col-span-2 ">
+                    <span class="me-1">(</span>
+                    <input class="rounded" type="number" name="ponto" value="" />
+                    <span class="ms-1">)</span>
+                </div>
+                <div class="col-span-2 col-end-16 justify-self-end">
+                    <button class="bg-[var(--color-minesterio)] rounded px-2 py-1" type="submit">Adicionar</button>
+                </div> 
+            </form>
+        </div> 
+    </div>
+    
 </body>
 
 <script>
