@@ -9,111 +9,117 @@
     <title>Reunião Details</title>
 </head>
 
-<body class="bg-zinc-500">
-    <div class="grid grid-cols-3">
-        <div class="col-span-2 text-2xl font-medium">
-            {{ reuniao.data|date:"d \D\E F"|upper}} | {{ reuniao.texto|upper}}
+<body class="bg-gray-900">
+    <div class="flex flex-col bg-gray-800 text-white p-4 rounded shadow-md">
+        <div class="flex justify-between items-center mb-3">
+            <div class="text-xl font-semibold">
+                {{ reuniao.data|date:"d \D\E F"|upper }} | {{ reuniao.texto|upper }}
+            </div>
+            <div>
+                <span class="font-semibold">Presidente:</span> {{ reuniao.presidente }}
+            </div>
         </div>
-        <div class="col-span-1">
-            <span class="font-medium ">
-                Presidente: 
-            </span>
-            {{reuniao.presidente}}
+        <div class="flex justify-between text-sm">
+            <div>
+                <span class="font-semibold">Conselheiro Sala B:</span> {{ reuniao.conselheiro_sala_b }}
+            </div>
+            <div>
+                <span class="font-semibold">Cantico:</span> {{ reuniao.cantico_inicial }}
+            </div>
+            <div>
+                <span class="font-semibold">Oração:</span> {{ reuniao.oracao_inicial }}
+            </div>
         </div>
-        <span class="col-span-1 col-end-4">Conselheiro Sala B: {{reuniao.conselheiro_sala_b}}</span>
-        <span class="col-span-1">Cantico: {{reuniao.cantico_inicial}}</span>
-        <span class="col-span-1 col-end-4">Oração: {{reuniao.oracao_inicial}}</span>
     </div>
     <div>
         <h3 class="text-2xl font-medium bg-[var(--color-tesouro)]">Tesouros da Palavra de Deus</h3>
-        <div class="grid grid-cols-12 gap-2 m-2">
-
+        <div class="grid grid-cols-12 gap-4 m-4">
             <!-- Cabeçalho -->
-            <div class="col-span-1">Nº Parte</div>
-            <div class="col-span-3">Nome Parte</div>
-            <div class="col-span-1">Duração</div>
-            <div class="col-span-2">Sala B</div>
-            <div class="col-span-2">Sala Principal</div>
-            <div class="col-span-1">Ponto</div>
-            <div class="col-span-1 col-end-13"></div>
+            <div class="col-span-1 text-white">Nº Parte</div>
+            <div class="col-span-3 text-white">Nome Parte</div>
+            <div class="col-span-1 text-white">Duração</div>
+            <div class="col-span-2 text-white">Sala B</div>
+            <div class="col-span-2 text-white">Sala Principal</div>
+            <div class="col-span-1 text-white">Ponto</div>
+            <div class="col-span-1 text-white col-end-13"></div>
 
             <!-- Dados -->
             <form class="contents" method="post" action="{% url 'update_parte' reuniao.pk %}">
-            {% for parte in tesouros %}
-                {% csrf_token %}
-                <input class="col-span-1 rounded " type="number" name="partes-{{ parte.pk }}-numero_parte" value="{{ parte.numero_parte }}" />
-                <input class="col-span-3 rounded" type="text" name="partes-{{ parte.pk }}-nome_parte" value="{{ parte.nome_parte }}" />
-                <input class="col-span-1 rounded" type="number" name="partes-{{ parte.pk }}-duracao" value="{{ parte.duracao }}" />
-                <div class="col-span-2 flex">
-                    <select class="rounded" name="partes-{{ parte.pk }}-pessoa_b">
-                        <option value="0" selected hidden>Selecione uma pessoa</option>
-                        {% for pessoa_b in pessoas %}  
-                        <option value="{{ pessoa_b.pk }}"
-                            {% if parte.pessoa_b_id == pessoa_b.pk %}selected{% endif %}>
-                            {{ pessoa_b.nome }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-pessoa_b')">Limpar</button>
-                </div>
-                <div class="col-span-2 flex">
-                    <select class="rounded" name="partes-{{ parte.pk }}-pessoa">
-                        <option value="0" selected hidden>Selecione uma pessoa</option>
-                        {% for pessoa in pessoas %}  
-                        <option value="{{ pessoa.pk }}"
-                            {% if parte.pessoa_id == pessoa.pk %}selected{% endif %}>
-                            {{ pessoa.nome }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-pessoa')">Limpar</button>
-                </div>
-                <div class="col-span-1 flex">
-                    <span class="me-1">(</span>
-                    <input class="rounded" type="number" name="partes-{{ parte.pk }}-ponto_parte" value="{{ parte.ponto_parte }}" />
-                    <span class="ms-1">)</span>
-                </div>
-                <div class="col-span-1 col-end-13 justify-self-end">
-                    <button class="bg-[var(--color-tesouro)] rounded px-2 py-1" name="confirmar_pk" value="{{ parte.pk }}" type="submit">Salvar</button>
-                    <button class="bg-red-600 rounded px-2 py-1" type="submit" formaction="{% url 'delete_parte' parte.pk %}">Deletar</button>
-                </div>
+                {% for parte in tesouros %}
+                    {% csrf_token %}
+                    <input class="col-span-1 rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" type="number" name="partes-{{ parte.pk }}-numero_parte" value="{{ parte.numero_parte }}" />
+                    <input class="col-span-3 rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" type="text" name="partes-{{ parte.pk }}-nome_parte" value="{{ parte.nome_parte }}" />
+                    <input class="col-span-1 rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" type="number" name="partes-{{ parte.pk }}-duracao" value="{{ parte.duracao }}" />
+                    <div class="col-span-2 flex space-x-2">
+                        <select class="rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" name="partes-{{ parte.pk }}-pessoa_b">
+                            <option value="0" selected hidden>Selecione uma pessoa</option>
+                            {% for pessoa_b in pessoas %}  
+                                <option value="{{ pessoa_b.pk }}"
+                                    {% if parte.pessoa_b_id == pessoa_b.pk %}selected{% endif %}>
+                                    {{ pessoa_b.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="bg-red-600 text-white rounded p-2" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-pessoa_b')">Limpar</button>
+                    </div>
+                    <div class="col-span-2 flex space-x-2">
+                        <select class="rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" name="partes-{{ parte.pk }}-pessoa">
+                            <option value="0" selected hidden>Selecione uma pessoa</option>
+                            {% for pessoa in pessoas %}  
+                                <option value="{{ pessoa.pk }}"
+                                    {% if parte.pessoa_id == pessoa.pk %}selected{% endif %}>
+                                    {{ pessoa.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="bg-red-600 text-white rounded p-2" onclick="limpar_campo_pessoa('partes-{{ parte.pk }}-pessoa')">Limpar</button>
+                    </div>
+                    <div class="col-span-1 flex items-center space-x-1">
+                        <span>(</span>
+                        <input class="rounded border border-gray-300 p-2 w-full focus:outline-none focus:ring focus:ring-blue-300" type="number" name="partes-{{ parte.pk }}-ponto_parte" value="{{ parte.ponto_parte }}" />
+                        <span>)</span>
+                    </div>
+                    <div class="col-span-1 col-end-13 flex justify-end space-x-2">
+                        <button class="bg-[var(--color-tesouro)] text-white rounded px-3 py-2" name="confirmar_pk" value="{{ parte.pk }}" type="submit">Salvar</button>
+                        <button class="bg-red-600 text-white rounded px-3 py-2" type="submit" formaction="{% url 'delete_parte' parte.pk %}">Deletar</button>
+                    </div>
                 {% endfor %}
             </form>
-            <form class="contents" method="post" action="{% url 'create_parte'  reuniao.pk%}">
+            <form class="contents" method="post" action="{% url 'create_parte' reuniao.pk %}">
                 {% csrf_token %}
                 <input type="text" name="trecho" value="Tesouros da Palavra de Deus" hidden>
-                <input class="col-span-1 rounded" type="number" name="numero_parte" value="" />
-                <input class="col-span-3 rounded" type="text" name="nome_parte" value="" />
-                <input class="col-span-1 rounded" type="number" name="duracao" value="" />
-                <div class="col-span-2 flex">
-                    <select class="rounded" name="pessoa_b">
+                <input class="col-span-1 rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" type="number" name="numero_parte" value="" />
+                <input class="col-span-3 rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" type="text" name="nome_parte" value="" />
+                <input class="col-span-1 rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" type="number" name="duracao" value="" />
+                <div class="col-span-2 flex space-x-2">
+                    <select class="rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" name="pessoa_b">
                         <option value="0" selected hidden>Selecione uma pessoa</option>
                         {% for pessoa_b in pessoas %}  
-                        <option value="{{ pessoa_b.pk }}">
-                            {{ pessoa_b.nome }}
-                        </option>
+                            <option value="{{ pessoa_b.pk }}">
+                                {{ pessoa_b.nome }}
+                            </option>
                         {% endfor %}
                     </select>
-                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('pessoa_b')">Limpar</button>
+                    <button type="button" class="bg-red-600 text-white rounded p-2" onclick="limpar_campo_pessoa('pessoa_b')">Limpar</button>
                 </div>
-                <div class="col-span-2 flex">
-                    <select class="rounded" name="pessoa">
+                <div class="col-span-2 flex space-x-2">
+                    <select class="rounded border border-gray-300 p-2 focus:outline-none focus:ring focus:ring-blue-300" name="pessoa">
                         <option value="0" selected hidden>Selecione uma pessoa</option>
                         {% for pessoa in pessoas %}  
-                        <option value="{{ pessoa.pk }}">
-                            {{ pessoa.nome }}
-                        </option>
+                            <option value="{{ pessoa.pk }}">
+                                {{ pessoa.nome }}
+                            </option>
                         {% endfor %}
                     </select>
-                    <button type="button" class="bg-red-600 rounded ms-1" onclick="limpar_campo_pessoa('pessoa')">Limpar</button>
+                    <button type="button" class="bg-red-600 text-white rounded p-2" onclick="limpar_campo_pessoa('pessoa')">Limpar</button>
                 </div>
-                <div class="col-span-1 flex">
-                    <span class="me-1">(</span>
-                    <input class="rounded" type="number" name="ponto" value="" />
-                    <span class="ms-1">)</span>
+                <div class="col-span-1 flex items-center space-x-1">
+                    <span>(</span>
+                    <input class="rounded border border-gray-300 p-2 w-full focus:outline-none focus:ring focus:ring-blue-300" type="number" name="ponto" value="" />
+                    <span>)</span>
                 </div>
-                <div class="col-span-1 col-end-13 justify-self-end">
-                    <button class="bg-[var(--color-tesouro)] rounded px-2 py-1" type="submit">Adicionar</button>
+                <div class="col-span-1 col-end-13 flex justify-end">
+                    <button class="bg-[var(--color-tesouro)] text-white rounded px-3 py-2" type="submit">Adicionar</button>
                 </div>
             </form>
         </div>
@@ -123,13 +129,13 @@
         <div class="grid grid-cols-[repeat(16,minmax(0,1fr))] gap-2 m-2">
 
             <!-- Cabeçalho -->
-            <div class="col-span-1">Nº Parte</div>
-            <div class="col-span-2">Nome Parte</div>
-            <div class="col-span-1">Duração</div>
-            <div class="col-span-4">Sala B</div>
-            <div class="col-span-4">Sala Principal</div>
-            <div class="col-span-2">Ponto</div>
-            <div class="col-span-2 col-end-16"></div> 
+            <div class="col-span-1 text-white">Nº Parte</div>
+            <div class="col-span-2 text-white">Nome Parte</div>
+            <div class="col-span-1 text-white">Duração</div>
+            <div class="col-span-4 text-white">Sala B</div>
+            <div class="col-span-4 text-white">Sala Principal</div>
+            <div class="col-span-2 text-white">Ponto</div>
+            <div class="col-span-2 text-white col-end-16"></div> 
 
             <!-- Dados -->
             <form class="contents" method="post" action="{% url 'update_parte' reuniao.pk %}">
