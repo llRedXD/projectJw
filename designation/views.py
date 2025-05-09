@@ -34,41 +34,31 @@ def reuniao(request, reuniao_id):
 def update_parte(request, pk):
     reuniao = get_object_or_404(Reuniao, pk=pk)
     if request.method == "POST":
-        confirm_pk = request.POST.get("confirmar_pk")
-        if confirm_pk:
-            parte = get_object_or_404(Parte, pk=confirm_pk, reuniao=reuniao)
-            # Atualiza campos básicos
-            parte.numero_parte = request.POST.get(
-                f"partes-{confirm_pk}-numero_parte", parte.numero_parte
-            )
-            parte.nome_parte = request.POST.get(
-                f"partes-{confirm_pk}-nome_parte", parte.nome_parte
-            )
-            parte.duracao = (
-                int(request.POST.get(f"partes-{confirm_pk}-duracao"))
-                if request.POST.get(f"partes-{confirm_pk}-duracao")
-                else 0
-            )
-            parte.pessoa_b = get_pessoa(
-                request.POST.get(f"partes-{confirm_pk}-pessoa_b")
-            )
-            parte.ajudante_b = get_pessoa(
-                request.POST.get(f"partes-{confirm_pk}-ajudante_b")
-            )
-            parte.pessoa = get_pessoa(request.POST.get(f"partes-{confirm_pk}-pessoa"))
-            parte.ajudante = get_pessoa(
-                request.POST.get(f"partes-{confirm_pk}-ajudante")
-            )
-            parte.ponto_parte = request.POST.get(
-                f"partes-{confirm_pk}-ponto_parte", parte.ponto_parte
-            )
-            parte.save()
+        parte = get_object_or_404(Parte, pk=pk, reuniao=reuniao)
+        # Atualiza campos básicos
+        parte.numero_parte = request.POST.get(
+            f"numero_parte_{parte.id}", parte.numero_parte
+        )
+        parte.nome_parte = request.POST.get(f"nome_parte_{parte.id}", parte.nome_parte)
+        parte.duracao = (
+            int(request.POST.get(f"duracao_{parte.id}"))
+            if request.POST.get(f"duracao_{parte.id}")
+            else 0
+        )
+        parte.pessoa_b = get_pessoa(request.POST.get(f"pessoa_b_{parte.id}"))
+        parte.ajudante_b = get_pessoa(request.POST.get(f"ajudante_b_{parte.id}"))
+        parte.pessoa = get_pessoa(request.POST.get(f"pessoa_{parte.id}"))
+        parte.ajudante = get_pessoa(request.POST.get(f"ajudante_{parte.id}"))
+        parte.ponto_parte = request.POST.get(
+            f"ponto_parte_{parte.id}", parte.ponto_parte
+        )
+        parte.save()
         return redirect("reuniao", reuniao.pk)
 
 
-def get_pessoa(id):
+def get_pessoa(nome):
     try:
-        pessoa = Pessoa.objects.get(pk=id)
+        pessoa = Pessoa.objects.get(nome=nome)
     except Pessoa.DoesNotExist:
         return None
     return pessoa

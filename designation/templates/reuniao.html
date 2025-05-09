@@ -31,6 +31,11 @@
             </div>
         </div>
     </div>
+    <datalist id="pessoa_list">
+        {% for pessoa in pessoas %}
+        <option value="{{ pessoa.nome }}"></option>
+        {% endfor %}
+    </datalist>
     <!-- Tesouros -->
     <div>
         <div class="bg-[var(--color-tesouro)] p-2 m-2 rounded flex items-center space-x-2">
@@ -40,87 +45,88 @@
             
         </div>
         {% for parte in tesouros %}
+        <form  method="post" action="{% url 'update_parte' reuniao.pk %}">
             {% csrf_token %}
             <div class="bg-white p-2 m-2 rounded flex items-center space-x-2">
-                <div class="w-2/4 flex">
-                    <div class="flex items-center space-x-0 text-[var(--color-tesouro)] font-medium">
-                        <input 
-                            id="numero_parte"
-                            type="text" 
-                            name="numero_parte" 
-                            value="{{ parte.numero_parte }}" 
-                            class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
-                            min="1" 
-                            max="3"
-                            aria-label="Número da Parte"
-                        />
-                        <span class="text-2xl">.</span>
-                    </div>
-                    <input type="text" name="nome_parte" value="{{ parte.nome_parte }}" class="rounded mb-0 p-2 w-3/5  border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" placeholder="Nome da Parte" />
-                    <div class="flex items-center space-x-0 text-[var(--color-tesouro)] font-medium">
-                        <input type="number" name="duracao" value="{{ parte.duracao }}" class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"  />
-                        <span class="text-sm">(min)</span>
-                    </div>
-                    <input type="text" name="ponto" value="{{ parte.ponto }}" class="rounded ml-10 mb-0 p-2 w-20 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" placeholder="Ponto" />
+            <div class="w-2/4 flex">
+                <div class="flex items-center space-x-0 text-[var(--color-tesouro)] font-medium">
+                <input 
+                    id="numero_parte"
+                    type="text" 
+                    name="numero_parte_{{ parte.id }}"
+                    value="{{ parte.numero_parte }}" 
+                    class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
+                    min="1" 
+                    max="3"
+                    aria-label="Número da Parte"
+                />
+                <span class="text-2xl">.</span>
                 </div>
-                <div class="flex items-center space-x-2 w-1/4">
-                    <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
-                        <span class="block font-semibold text-xs">Anterior</span>
-                        <span class="block text-sm opacity-75">Teste</span>
-                    </div>
-                    <input type="text" name="pessoa_b" value="{{ parte.pessoa_b|default_if_none:'' }}" 
-                        class="rounded border border-gray-300 p-2 h-8 w-3/5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" 
-                        placeholder="Pessoa" list="pessoa-list"/>
-                    <datalist id="pessoa-list">
-                        {% for pessoa_b in pessoas %}
-                        {% if parte.pessoa_b_id != pessoa_b.pk %}
-                            <option value="{{ pessoa_b.nome }}"></option>
-                        {% endif %}
-                        {% endfor %}
-                    </datalist>
-                    <button type="button" 
-                            class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center" 
-                            onclick="limpar_campo_pessoa('pessoa')">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                    <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
-                        <span class="block font-semibold text-xs">Proximo</span>
-                        <span class="block text-sm opacity-75">Teste</span>
-                    </div>
+                <input type="text" name="nome_parte_{{ parte.id }}" value="{{ parte.nome_parte }}" class="rounded mb-0 p-2 w-3/5  border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" placeholder="Nome da Parte" />
+                <div class="flex items-center space-x-0 text-[var(--color-tesouro)] font-medium">
+                <input type="number" name="duracao_{{ parte.id }}" value="{{ parte.duracao }}" class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"  />
+                <span class="text-sm">(min)</span>
                 </div>
-                <div class="flex items-center space-x-2 w-1/4">
-                    <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
-                        <span class="block font-semibold text-xs">Anterior</span>
-                        <span class="block text-sm opacity-75">Teste</span>
-                    </div>
-                    <input type="text" name="pessoa" value="{{ parte.pessoa }}" 
-                        class="rounded border border-gray-300 p-2 h-8 w-3/5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" 
-                        placeholder="Pessoa" list="pessoa-list"/>
-                    <datalist id="pessoa-list">
-                        {% for pessoa in pessoas %}
-                        {% if parte.pessoa_id != pessoa.pk %}
-                            <option value="{{ pessoa.nome }}"></option>
-                        {% endif %}
-                        {% endfor %}
-                    </datalist>
-                    <button type="button" 
-                            class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center" 
-                            onclick="limpar_campo_pessoa('pessoa')">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                    <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
-                        <span class="block font-semibold text-xs">Proximo</span>
-                        <span class="block text-sm opacity-75">Teste</span>
-                    </div>
-                </div>
-                <button type="button" class="bg-green-600 text-white rounded px-2 py-1 hover:bg-green-700 focus:outline-none">
-                    Salvar
-                </button>
+                {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %}
+                <input type="text" name="ponto_parte_{{ parte.id }}" value="{{ parte.ponto }}" class="rounded ml-10 mb-0 p-2 w-20 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" placeholder="Ponto" />
+                {% endif %}
             </div>
+            {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %}
+            <!-- Pessoa B -->
+            <div class="flex items-center space-x-2 w-1/4">
+                <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                <span class="block font-semibold text-xs">Anterior</span>
+                <span class="block text-sm opacity-75">Teste</span>
+                </div>
+                <input type="text" name="pessoa_b_{{parte.id}}" value="{{ parte.pessoa_b|default_if_none:'' }}" 
+                class="rounded border border-gray-300 p-2 h-8 w-3/5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" 
+                placeholder="Pessoa" list="pessoa_list"/>
+                
+                <button type="button" 
+                    class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center" 
+                    onclick="limpar_campo_pessoa('pessoa_b_{{parte.id}}')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                </button>
+                <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                <span class="block font-semibold text-xs">Proximo</span>
+                <span class="block text-sm opacity-75">Teste</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="w-1/4"></div>
+            {% endif %}
+            <!-- Pessoa  -->
+            <div class="flex items-center space-x-2 w-1/4">
+                <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                <span class="block font-semibold text-xs">Anterior</span>
+                <span class="block text-sm opacity-75">Teste</span>
+                </div>
+                <input type="text" name="pessoa_{{parte.id}}" value="{{ parte.pessoa }}" 
+                class="rounded border border-gray-300 p-2 h-8 w-3/5 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" 
+                placeholder="Pessoa" list="pessoa_list"/>
+
+                <button type="button" 
+                    class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center" 
+                    onclick="limpar_campo_pessoa('pessoa_{{parte.id}}')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                </button>
+                <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                <span class="block font-semibold text-xs">Proximo</span>
+                <span class="block text-sm opacity-75">Teste</span>
+                </div>
+            </div>
+            <button type="submit" value="{{ parte.pk }}" class="bg-green-600 text-white rounded px-2 py-1 hover:bg-green-700 focus:outline-none">
+                Salvar
+            </button>
+            <button type="button" class="bg-red-600 text-white rounded px-2 py-1 hover:bg-red-700 focus:outline-none">
+                Deletar
+            </button>
+            </div>
+        </form>
         {% endfor %}
     </div>
     <!-- Faça seu Melhor no Ministério -->
@@ -139,7 +145,7 @@
                         <input 
                             id="numero_parte"
                             type="text" 
-                            name="numero_parte" 
+                            name="numero_parte_{{ parte.id }}" 
                             value="{{ parte.numero_parte }}" 
                             class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                             min="1" 
@@ -153,43 +159,53 @@
                         <input type="number" name="duracao" value="{{ parte.duracao }}" class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"  />
                         <span class="text-sm">(min)</span>
                     </div>
+                    {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %} 
+                    <input type="text" name="ponto_parte_{{ parte.id }}" value="{{ parte.ponto }}"
+                        class="rounded ml-10 mb-0 p-2 w-20 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
+                        placeholder="Ponto" />
+                    {% endif %}
                 </div>
-                <div class="flex items-center space-x-2 w-1/4">
-                    <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
-                        <span class="block font-semibold text-xs">Anterior</span>
-                        <span class="block text-sm opacity-75">Teste</span>
+                <!-- Pessoa B -->
+                
+                {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %}
+                    <div class="flex items-center space-x-2 w-1/4">
+                        <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                            <span class="block font-semibold text-xs">Anterior</span>
+                            <span class="block text-sm opacity-75">Teste</span>
+                        </div>
+                        <input type="text" name="pessoa_b" value="{{ parte.pessoa_b|default_if_none:'' }}"
+                            class="rounded border border-gray-300 p-2 h-8 w-1/3 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
+                            placeholder="Pessoa" list="pessoa_list" />
+                        <datalist id="pessoa_list">
+                            {% for pessoa_b in pessoas %}
+                                {% if parte.pessoa_b_id != pessoa_b.pk %}
+                                    <option value="{{ pessoa_b.nome }}"></option>
+                                {% endif %}
+                            {% endfor %}
+                        </datalist>
+                        <input type="text" name="pessoa_b" value="{{ parte.pessoa_b|default_if_none:'' }}"
+                            class="rounded border border-gray-300 p-2 h-8 w-1/3 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
+                            placeholder="Pessoa" list="pessoa_list" />
+                        <datalist id="pessoa_list">
+                            {% for pessoa_b in pessoas %}
+                                {% if parte.pessoa_b_id != pessoa_b.pk %}
+                                    <option value="{{ pessoa_b.nome }}"></option>
+                                {% endif %}
+                            {% endfor %}
+                        </datalist>
+                        <button type="button" class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
+                            onclick="limpar_campo_pessoa('pessoa')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                            <span class="block font-semibold text-xs">Proximo</span>
+                            <span class="block text-sm opacity-75">Teste</span>
+                        </div>
                     </div>
-                    <input type="text" name="pessoa_b" value="{{ parte.pessoa_b|default_if_none:'' }}"
-                        class="rounded border border-gray-300 p-2 h-8 w-1/3 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
-                        placeholder="Pessoa" list="pessoa-list" />
-                    <datalist id="pessoa-list">
-                        {% for pessoa_b in pessoas %}
-                        {% if parte.pessoa_b_id != pessoa_b.pk %}
-                        <option value="{{ pessoa_b.nome }}"></option>
-                        {% endif %}
-                        {% endfor %}
-                    </datalist>
-                    <input type="text" name="pessoa_b" value="{{ parte.pessoa_b|default_if_none:'' }}"
-                        class="rounded border border-gray-300 p-2 h-8 w-1/3 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
-                        placeholder="Pessoa" list="pessoa-list" />
-                    <datalist id="pessoa-list">
-                        {% for pessoa_b in pessoas %}
-                        {% if parte.pessoa_b_id != pessoa_b.pk %}
-                        <option value="{{ pessoa_b.nome }}"></option>
-                        {% endif %}
-                        {% endfor %}
-                    </datalist>
-                    <button type="button" class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
-                        onclick="limpar_campo_pessoa('pessoa')">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                    <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
-                        <span class="block font-semibold text-xs">Proximo</span>
-                        <span class="block text-sm opacity-75">Teste</span>
-                    </div>
-                </div>
+                {% endif %}
+                <!-- Pessoa  -->
                 <div class="flex items-center space-x-2 w-1/4">
                     <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                         <span class="block font-semibold text-xs">Anterior</span>
@@ -197,8 +213,8 @@
                     </div>
                     <input type="text" name="pessoa" value="{{ parte.pessoa }}"
                         class="rounded border border-gray-300 p-2 h-8 w-1/3 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
-                        placeholder="Pessoa" list="pessoa-list" />
-                    <datalist id="pessoa-list">
+                        placeholder="Pessoa" list="pessoa_list" />
+                    <datalist id="pessoa_list">
                         {% for pessoa in pessoas %}
                         {% if parte.pessoa_id != pessoa.pk %}
                         <option value="{{ pessoa.nome }}"></option>
@@ -207,8 +223,8 @@
                     </datalist>
                     <input type="text" name="pessoa" value="{{ parte.pessoa }}"
                         class="rounded border border-gray-300 p-2 h-8 w-1/3 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
-                        placeholder="Pessoa" list="pessoa-list" />
-                    <datalist id="pessoa-list">
+                        placeholder="Pessoa" list="pessoa_list" />
+                    <datalist id="pessoa_list">
                         {% for pessoa in pessoas %}
                         {% if parte.pessoa_id != pessoa.pk %}
                         <option value="{{ pessoa.nome }}"></option>
@@ -229,6 +245,9 @@
                 <button type="button" class="bg-green-600 text-white rounded px-2 py-1 hover:bg-green-700 focus:outline-none">
                     Salvar
                 </button>
+                <button type="button" class="bg-red-600 text-white rounded px-2 py-1 hover:bg-red-700 focus:outline-none">
+                    Deletar
+                </button>
             </div>
         {% endfor %}
     </div>
@@ -238,7 +257,7 @@
 <script>
     const limpar_campo_pessoa = (target) => {
         const select = document.querySelector(`[name="${target}"]`);
-        select.value = 0;
+        select.value = "";
     }
 </script>
 
