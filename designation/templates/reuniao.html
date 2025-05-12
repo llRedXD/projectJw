@@ -10,6 +10,21 @@
 </head>
 
 <body class="bg-gray-900">
+    {% if error %}
+    <div id="errorModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-bold mb-4">Erro</h3>
+            <p class="mb-4">{{ error }}</p>
+            <button 
+                onclick="document.getElementById('errorModal').style.display='none'" 
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none"
+            >
+                Fechar
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="flex flex-col bg-gray-800 text-white p-4 rounded shadow-md">
         <div class="flex justify-between items-center mb-3">
             <div class="text-xl font-semibold">
@@ -45,7 +60,7 @@
             
         </div>
         {% for parte in tesouros %}
-        <form  method="post" action="{% url 'update_parte' reuniao.pk %}">
+        <form  method="post" action="{% url 'update_parte' parte.pk %}">
             {% csrf_token %}
             <div class="bg-white p-2 m-2 rounded flex items-center space-x-2">
                 <div class="w-2/4 flex">
@@ -53,7 +68,7 @@
                         <input 
                             id="numero_parte"
                             type="text" 
-                            name="numero_parte_{{ parte.id }}"
+                            name="numero_parte"
                             value="{{ parte.numero_parte }}" 
                             class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                             min="1" 
@@ -62,13 +77,13 @@
                         />
                         <span class="text-2xl">.</span>
                     </div>
-                    <input type="text" name="nome_parte_{{ parte.id }}" value="{{ parte.nome_parte }}" class="rounded mb-0 p-2 w-3/5  border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" placeholder="Nome da Parte" />
+                    <input type="text" name="nome_parte" value="{{ parte.nome_parte }}" class="rounded mb-0 p-2 w-3/5  border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" placeholder="Nome da Parte" />
                     <div class="flex items-center space-x-0 text-[var(--color-tesouro)] font-medium">
-                        <input type="number" name="duracao_{{ parte.id }}" value="{{ parte.duracao }}" class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"  />
+                        <input type="number" name="duracao" value="{{ parte.duracao }}" class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"  />
                         <span class="text-sm">(min)</span>
                     </div>
                     {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %}
-                        <input type="text" name="ponto_parte_{{ parte.id }}" value="{{ parte.ponto }}" class="rounded ml-10 mb-0 p-2 w-20 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" placeholder="Ponto" />
+                        <input type="text" name="ponto_parte" value="{{ parte.ponto }}" class="rounded ml-10 mb-0 p-2 w-20 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" placeholder="Ponto" />
                     {% endif %}
                 </div>
             {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %}
@@ -151,7 +166,7 @@
                             <input 
                                 id="numero_parte"
                                 type="text" 
-                                name="numero_parte_{{ parte.id }}" 
+                                name="numero_parte" 
                                 value="{{ parte.numero_parte }}" 
                                 class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                                 min="1" 
@@ -160,7 +175,7 @@
                             />
                             <span class="text-2xl">.</span>
                         </div>
-                        <select name="nome_parte_{{ parte.id }}" class="rounded mb-0 p-2 w-3/5 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" value="Inciando conversas">
+                        <select name="nome_parte" class="rounded mb-0 p-2 w-3/5 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300" value="Inciando conversas">
                             <option value="" disabled hidden {% if not parte.nome_parte %}selected hidden{% endif %}>Nome da Parte</option>
                             <option value="Inciando conversas" {% if parte.nome_parte == "Inciando conversas" %}selected{% endif %}>Inciando conversas</option>
                             <option value="Cultivando o interesse" {% if parte.nome_parte == "Cultivando o interesse" %}selected{% endif %}>Cultivando o interesse</option>
@@ -168,11 +183,11 @@
                             <option value="Discurso" {% if parte.nome_parte == "Discurso" %}selected{% endif %}>Discurso</option>
                         </select>
                         <div class="flex items-center space-x-0 text-[var(--color-minesterio)] font-medium">
-                            <input type="number" name="duracao_{{ parte.id }}" value="{{ parte.duracao }}" class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"  />
+                            <input type="number" name="duracao" value="{{ parte.duracao }}" class="rounded mb-0 w-12 p-2 text-center border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"  />
                             <span class="text-sm">(min)</span>
                         </div>
                         {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %} 
-                        <input type="text" name="ponto_parte_{{ parte.id }}" value="{{ parte.ponto }}"
+                        <input type="text" name="ponto_parte" value="{{ parte.ponto }}"
                             class="rounded ml-10 mb-0 p-2 w-20 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                             placeholder="Ponto" />
                         {% endif %}
@@ -185,17 +200,17 @@
                                 <span class="block font-semibold text-xs">Anterior</span>
                                 <span class="block text-sm opacity-75">Teste</span>
                             </div>
-                            <input type="text" name="pessoa_b_{{ parte.id }}" value="{{ parte.pessoa_b|default_if_none:'' }}"
+                            <input type="text" name="pessoa_b" value="{{ parte.pessoa_b|default_if_none:'' }}"
                             class="rounded border border-gray-300 p-2 h-8 {% if parte.nome_parte == 'Discurso' %}w-3/5{% else %}w-1/3{% endif %} focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                             placeholder="Pessoa" list="pessoa_list" />
                             {% if parte.nome_parte != "Discurso" %}
                                 <span class="text-xl font-bold">/</span>
-                                <input type="text" name="ajudante_b_{{ parte.id }}" value="{{ parte.ajudante_b|default_if_none:'' }}"
+                                <input type="text" name="ajudante_b" value="{{ parte.ajudante_b|default_if_none:'' }}"
                                 class="rounded border border-gray-300 p-2 h-8 {% if parte.nome_parte == 'Discurso' %}w-3/5{% else %}w-1/3{% endif %} focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                                 placeholder="Pessoa" list="pessoa_list" />
                             {% endif %}
                                 <button type="button" class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
-                                onclick="limpar_campo_pessoa('pessoa_b_{{ parte.id }}')">
+                                onclick="limpar_campo_pessoa('pessoa_b')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -212,17 +227,17 @@
                             <span class="block font-semibold text-xs">Anterior</span>
                             <span class="block text-sm opacity-75">Teste</span>
                         </div>
-                        <input type="text" name="pessoa_{{ parte.id }}" value="{{ parte.pessoa | default_if_none:'' }}"
+                        <input type="text" name="pessoa" value="{{ parte.pessoa | default_if_none:'' }}"
                             class="rounded border border-gray-300 p-2 h-8 {% if parte.nome_parte == 'Discurso' %}w-3/5{% else %}w-1/3{% endif %} focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                             placeholder="Pessoa" list="pessoa_list" />
                         {% if parte.nome_parte != "Discurso" %}
                         <span class="text-xl font-bold">/</span>
-                        <input type="text" name="ajudante_{{ parte.id }}" value="{{ parte.ajudante|default_if_none:'' }}"
+                        <input type="text" name="ajudante" value="{{ parte.ajudante|default_if_none:'' }}"
                             class="rounded border border-gray-300 p-2 h-8 w-1/3 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                             placeholder="Pessoa" list="pessoa_list" />
                         {% endif %}
                         <button type="button" class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
-                            onclick="limpar_campo_pessoa('pessoa_{{ parte.id }}')">
+                            onclick="limpar_campo_pessoa('pessoa')">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>

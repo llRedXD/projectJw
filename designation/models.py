@@ -84,8 +84,8 @@ class Parte(models.Model):
     def __str__(self):
         return f"Parte {self.numero_parte} - {self.nome_parte} ({self.reuniao.data})"
 
-    class Meta:
-        unique_together = (
-            "reuniao",
-            "numero_parte",
-        )
+    # class Meta:
+    # unique_together = (
+    #     "reuniao",
+    #     "numero_parte",
+    # )
