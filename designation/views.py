@@ -64,26 +64,42 @@ def get_pessoa(nome):
     return pessoa
 
 
+def verificar_quantidade_parte(reuniao, trecho):
+    if trecho == "Tesouros da Palavra de Deus":
+        return Parte.objects.filter(reuniao=reuniao, trecho=trecho).count() < 3
+    if trecho == "Faça seu Melhor no Ministério":
+        return Parte.objects.filter(reuniao=reuniao, trecho=trecho).count() < 4
+    if trecho == "Nossa Vida Cristã":
+        return Parte.objects.filter(reuniao=reuniao, trecho=trecho).count() < 3
+
+
 def create_parte(request, pk):
     if request.method == "POST":
         reuniao = get_object_or_404(Reuniao, pk=pk)
-        pessoa = get_pessoa(request.POST.get("pessoa"))
-        pessoa_b = get_pessoa(request.POST.get("pessoa_b"))
-
+        numero_parte_nova = int(request.POST.get("numero_parte_nova"))
+        trecho = request.POST.get("trecho")
+        if not verificar_quantidade_parte(reuniao, trecho):
+            return redirect("reuniao", pk)
+        # Verifica se já existe uma parte com o mesmo numero_parte
+        if Parte.objects.filter(
+            reuniao=reuniao, numero_parte=numero_parte_nova
+        ).exists():
+            # Reorganiza os números das partes, incrementando em 1 as partes com numero_parte >= numero_parte_nova
+            partes_para_atualizar = Parte.objects.filter(
+                reuniao=reuniao, numero_parte__gte=numero_parte_nova
+            ).order_by("-numero_parte")
+            for parte in partes_para_atualizar:
+                parte.numero_parte += 1
+                parte.save()
         parte = Parte(
             reuniao=reuniao,
-            numero_parte=request.POST.get("numero_parte"),
-            trecho=request.POST.get("trecho"),
-            nome_parte=request.POST.get("nome_parte"),
-            ponto_parte=request.POST.get("ponto_parte"),
-            duracao=int(request.POST.get("duracao"))
-            if request.POST.get("duracao")
-            else 0,
-            pessoa=pessoa,
-            pessoa_b=pessoa_b,
+            numero_parte=numero_parte_nova,
+            trecho=trecho,
         )
+        parte.full_clean()
         parte.save()
-        return redirect("reuniao", reuniao.pk)
+
+    return redirect("reuniao", pk)
 
 
 def delete_parte(request, pk):

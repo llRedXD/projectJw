@@ -16,9 +16,9 @@ class Pessoa(models.Model):
 class Reuniao(models.Model):
     data = models.DateField()
     texto = models.CharField(max_length=100)
-    cantico_inicial = models.CharField(max_length=100)
-    cantico_meio = models.CharField(max_length=100)
-    cantico_final = models.CharField(max_length=100)
+    cantico_inicial = models.CharField(max_length=100, default=0)
+    cantico_meio = models.CharField(max_length=100, default=0)
+    cantico_final = models.CharField(max_length=100, default=0)
     oracao_inicial = models.ForeignKey(
         Pessoa, on_delete=models.CASCADE, related_name="oracao_inicial", null=True
     )
@@ -49,9 +49,9 @@ class Parte(models.Model):
         max_length=50,
         choices=Trecho.choices,
     )
-    nome_parte = models.CharField(max_length=100)
+    nome_parte = models.CharField(max_length=100, blank=True, null=True)
     ponto_parte = models.CharField(max_length=100, blank=True, null=True)
-    duracao = models.PositiveIntegerField()
+    duracao = models.PositiveIntegerField(default=0)
     pessoa = models.ForeignKey(
         Pessoa,
         on_delete=models.CASCADE,
