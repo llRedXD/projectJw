@@ -32,9 +32,9 @@ def reuniao(request, reuniao_id):
 
 
 def update_parte(request, pk):
-    reuniao = get_object_or_404(Reuniao, pk=pk)
     if request.method == "POST":
-        parte = get_object_or_404(Parte, pk=pk, reuniao=reuniao)
+        parte = get_object_or_404(Parte, pk=pk)
+        reuniao = parte.reuniao
         # Atualiza campos básicos
         parte.numero_parte = request.POST.get(
             f"numero_parte_{parte.id}", parte.numero_parte
