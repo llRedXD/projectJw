@@ -3,12 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <title>Teste</title>
   </head>
-  <body>
-    <h1>Print Teste</h1>
-    {% for r in reuniao %}
-    <p>{{ r }}</p>
-    {% endfor %}
+  <body class="bg-gray-900">
+    <div class="flex flex-col bg-gray-800 text-white p-4 rounded shadow-md">
+      <header class="py-4">
+        <h1 class="text-3xl font-bold text-center">Tela de Reuniões</h1>
+      </header>
+    </div>
+    <div class="grid grid-cols-1 gap-4 mt-6 p-2">
+      {% for r in reuniao %}
+        <a href="{% url 'reuniao' r.pk %}" class="block p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition-colors">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">{{ r }}</h2>
+            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </a>
+      {% empty %}
+        <p class="text-gray-400">Nenhuma reunião disponível.</p>
+      {% endfor %}
+    </div>
   </body>
 </html>

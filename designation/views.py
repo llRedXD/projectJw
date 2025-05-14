@@ -55,9 +55,9 @@ def reuniao(request, reuniao_id):
         return redirect("index")
 
 
-# ┌───────────────────────────────────────────────────────────────────────────┐
-# │ Operações CRUD sobre Parte                                               │
-# └───────────────────────────────────────────────────────────────────────────┘
+#   ┌─────────────────────────────────────────────────────────────────────────┐
+#  | Operações CRUD sobre Reunião                                            │
+# └─────────────────────────────────────────────────────────────────────────┘
 def update_reuniao(request, pk):
     """
     Atualiza os campos de uma reunião existente.
@@ -77,6 +77,11 @@ def update_reuniao(request, pk):
     except Exception as e:
         messages.error(request, "Erro ao atualizar reunião: " + str(e))
         return redirect("reuniao", pk)
+
+
+# ┌───────────────────────────────────────────────────────────────────────────┐
+# │ Operações CRUD sobre Parte                                               │
+# └───────────────────────────────────────────────────────────────────────────┘
 
 
 def create_parte(request, pk):
