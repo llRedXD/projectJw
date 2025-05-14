@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
+from django.contrib import messages
 
 from designation.models import Parte, Pessoa, Reuniao
 
@@ -7,7 +8,7 @@ from designation.models import Parte, Pessoa, Reuniao
 # ┌───────────────────────────────────────────────────────────────────────────┐
 # │ Views principais                                                         │
 # └───────────────────────────────────────────────────────────────────────────┘
-def index(request, error=None):
+def index(request):
     """
     Exibe a lista de todas as reuniões.
     Parâmetros:
@@ -15,10 +16,10 @@ def index(request, error=None):
       - error: mensagem de erro opcional
     """
     reunioes = Reuniao.objects.all()
-    return render(request, "index.html", {"reuniao": reunioes, "error": error})
+    return render(request, "index.html", {"reuniao": reunioes})
 
 
-def reuniao(request, reuniao_id, error=None):
+def reuniao(request, reuniao_id):
     """
     Exibe os detalhes de uma reunião específica, incluindo suas partes e pessoas.
     Parâmetros:
@@ -46,7 +47,6 @@ def reuniao(request, reuniao_id, error=None):
             "tesouros": tesouros,
             "ministerio": ministerio,
             "vida_crista": vida_crista,
-            "error": error,
         },
     )
 
@@ -80,6 +80,7 @@ def create_parte(request, pk):
             reorder_partes(reuniao, parte)
         return redirect("reuniao", reuniao.pk)
     except ValueError:
+        messages.error(request, "Número de parte inválido ou já existente.")
         return redirect("reuniao", pk)
 
 
@@ -102,6 +103,7 @@ def update_parte(request, pk):
             .exists()
         ):
             reorder_partes(reuniao, parte)
+        verificar_numero_parte(reuniao, parte.numero_parte, parte.trecho)
         parte.nome_parte = request.POST.get("nome_parte", parte.nome_parte)
         parte.duracao = int(request.POST.get("duracao", 0))
         parte.pessoa_b = get_pessoa(request.POST.get("pessoa_b"))
@@ -112,7 +114,8 @@ def update_parte(request, pk):
         parte.save()
         return redirect("reuniao", reuniao.pk)
     except (ValueError, TypeError) as e:
-        return redirect("reuniao", reuniao.pk, {"error": str(e)})
+        messages.error(request, "Erro ao atualizar parte: " + str(e))
+        return redirect("reuniao", reuniao.pk)
 
 
 def delete_parte(request, pk):
@@ -172,7 +175,9 @@ def verificar_numero_parte(reuniao, numero_parte, trecho):
         raise ValueError("Trecho inválido.")
     minimo, maximo = limites[trecho]
     if not (minimo <= numero_parte <= maximo):
-        return False
+        raise ValueError(
+            f"Número de parte {numero_parte} fora dos limites para o trecho {trecho}."
+        )
     # Última posição não pode estar duplicada
     if (
         numero_parte == maximo

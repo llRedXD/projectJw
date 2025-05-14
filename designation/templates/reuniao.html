@@ -10,11 +10,13 @@
 </head>
 
 <body class="bg-gray-900">
-    {% if error %}
+    {% if messages %}
         <div id="errorModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <h3 class="text-xl font-bold mb-4">Erro</h3>
-                <p class="mb-4">{{ error }}</p>
+                {% for msg in messages %}
+                    <p>{{ msg }}</p>
+                {% endfor %}
                 <button
                     onclick="document.getElementById('errorModal').style.display='none'"
                     class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none"
@@ -99,7 +101,8 @@
                             <input
                                 type="text"
                                 name="ponto_parte"
-                                value="{{ parte.ponto }}"
+                                value="{{ parte.ponto_parte| default_if_none:'' }}"
+                                {% if parte.nome_parte == 'Discurso' %}disabled{% endif %}
                                 class="rounded ml-10 mb-0 p-2 w-20 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                                 placeholder="Ponto"
                             />
@@ -252,7 +255,11 @@
                             <input
                                 type="text"
                                 name="ponto_parte"
-                                value="{{ parte.ponto }}"
+                                value="{{ parte.ponto_parte| default_if_none:'' }}"
+                                {% if parte.nome_parte == "Discurso" %}disabled{% endif %}
+                                {% if parte.nome_parte == "Inciando conversas" %}placeholder="Ponto"{% endif %}
+                                {% if parte.nome_parte == "Cultivando o interesse" %}placeholder="Ponto"{% endif %}
+                                {% if parte.nome_parte == "Fazendo discípulos" %}placeholder="Ponto"{% endif %}
                                 class="rounded ml-10 mb-0 p-2 w-20 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                                 placeholder="Ponto"
                             />
