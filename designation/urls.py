@@ -6,6 +6,11 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("reuniao/<int:reuniao_id>/", views.reuniao, name="reuniao"),
     path(
+        "reuniao/<int:pk>/update_reuniao/",
+        views.update_reuniao,
+        name="update_reuniao",
+    ),
+    path(
         "reuniao/<int:pk>/update_parte/",
         views.update_parte,
         name="update_parte",

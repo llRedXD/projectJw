@@ -586,6 +586,18 @@ video {
   margin-left: 2.5rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
 .block {
   display: block;
 }
@@ -622,6 +634,10 @@ video {
   width: 3rem;
 }
 
+.w-14 {
+  width: 3.5rem;
+}
+
 .w-2\/4 {
   width: 50%;
 }
@@ -646,32 +662,24 @@ video {
   width: 20rem;
 }
 
+.w-auto {
+  width: auto;
+}
+
 .w-full {
   width: 100%;
 }
 
-.w-14 {
-  width: 3.5rem;
+.w-1\/6 {
+  width: 16.666667%;
 }
 
-.w-3 {
-  width: 0.75rem;
-}
-
-.w-3\.5 {
-  width: 0.875rem;
-}
-
-.w-4\/12 {
-  width: 33.333333%;
+.w-1\/12 {
+  width: 8.333333%;
 }
 
 .w-2\/12 {
   width: 16.666667%;
-}
-
-.w-3\/12 {
-  width: 25%;
 }
 
 .flex-col {
@@ -731,6 +739,10 @@ video {
   background-color: var(--color-tesouro);
 }
 
+.bg-\[var\(--color-vida-crista\)\] {
+  background-color: var(--color-vida-crista);
+}
+
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
@@ -776,12 +788,12 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-\[var\(--color-vida-crista\)\] {
-  background-color: var(--color-vida-crista);
-}
-
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5;
+}
+
+.p-1 {
+  padding: 0.25rem;
 }
 
 .p-2 {
@@ -794,10 +806,6 @@ video {
 
 .p-6 {
   padding: 1.5rem;
-}
-
-.p-3 {
-  padding: 0.75rem;
 }
 
 .px-2 {
@@ -823,19 +831,6 @@ video {
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-}
-
-.py-3 {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-}
-
-.pe-3 {
-  padding-inline-end: 0.75rem;
-}
-
-.ps-3 {
-  padding-inline-start: 0.75rem;
 }
 
 .text-center {
@@ -887,6 +882,10 @@ video {
   color: var(--color-tesouro);
 }
 
+.text-\[var\(--color-vida-crista\)\] {
+  color: var(--color-vida-crista);
+}
+
 .text-gray-600 {
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity));
@@ -895,10 +894,6 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.text-\[var\(--color-vida-crista\)\] {
-  color: var(--color-vida-crista);
 }
 
 .opacity-75 {

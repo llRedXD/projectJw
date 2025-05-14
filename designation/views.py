@@ -27,33 +27,58 @@ def reuniao(request, reuniao_id):
       - reuniao_id: ID da reunião
       - error: mensagem de erro opcional
     """
-    reuniao = get_object_or_404(Reuniao, id=reuniao_id)
-    partes = Parte.objects.filter(reuniao=reuniao)
-    tesouros = partes.filter(trecho="Tesouros da Palavra de Deus").order_by(
-        "numero_parte"
-    )
-    ministerio = partes.filter(trecho="Faça seu Melhor no Ministério").order_by(
-        "numero_parte"
-    )
-    vida_crista = partes.filter(trecho="Nossa Vida Cristã").order_by("numero_parte")
-    pessoas = Pessoa.objects.all()
-    return render(
-        request,
-        "reuniao.html",
-        {
-            "reuniao": reuniao,
-            "partes": partes,
-            "pessoas": pessoas,
-            "tesouros": tesouros,
-            "ministerio": ministerio,
-            "vida_crista": vida_crista,
-        },
-    )
+    try:
+        reuniao = get_object_or_404(Reuniao, id=reuniao_id)
+        partes = Parte.objects.filter(reuniao=reuniao)
+        tesouros = partes.filter(trecho="Tesouros da Palavra de Deus").order_by(
+            "numero_parte"
+        )
+        ministerio = partes.filter(trecho="Faça seu Melhor no Ministério").order_by(
+            "numero_parte"
+        )
+        vida_crista = partes.filter(trecho="Nossa Vida Cristã").order_by("numero_parte")
+        pessoas = Pessoa.objects.all()
+        return render(
+            request,
+            "reuniao.html",
+            {
+                "reuniao": reuniao,
+                "partes": partes,
+                "pessoas": pessoas,
+                "tesouros": tesouros,
+                "ministerio": ministerio,
+                "vida_crista": vida_crista,
+            },
+        )
+    except Exception as e:
+        messages.error(request, "Erro ao carregar reunião: " + str(e))
+        return redirect("index")
 
 
 # ┌───────────────────────────────────────────────────────────────────────────┐
 # │ Operações CRUD sobre Parte                                               │
 # └───────────────────────────────────────────────────────────────────────────┘
+def update_reuniao(request, pk):
+    """
+    Atualiza os campos de uma reunião existente.
+    - Verifica se o ID da reunião é válido.
+    - Atualiza os campos com base nos dados do formulário.
+    """
+    if request.method != "POST":
+        return redirect("reuniao", pk)
+    try:
+        reuniao = get_object_or_404(Reuniao, pk=pk)
+        reuniao.texto = request.POST.get("texto", reuniao.texto)
+        reuniao.data = request.POST.get("data")
+        reuniao.presidente = get_pessoa(request.POST.get("presidente"))
+        reuniao.conselheiro_sala_b = get_pessoa(request.POST.get("conselheiro_sala_b"))
+        reuniao.save()
+        return redirect("reuniao", pk)
+    except Exception as e:
+        messages.error(request, "Erro ao atualizar reunião: " + str(e))
+        return redirect("reuniao", pk)
+
+
 def create_parte(request, pk):
     """
     Cria uma nova parte em uma reunião.
@@ -138,9 +163,11 @@ def get_pessoa(nome):
     Retorna a instância de Pessoa pelo nome ou None se não existir.
     """
     try:
+        if nome in ["", "None", None]:
+            return None
         return Pessoa.objects.get(nome=nome)
     except Pessoa.DoesNotExist:
-        return None
+        raise ValueError(f"Pessoa '{nome}' não encontrada.")
 
 
 def verificar_quantidade_parte(reuniao, trecho):

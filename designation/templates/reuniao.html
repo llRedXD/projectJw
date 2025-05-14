@@ -28,25 +28,73 @@
     {% endif %}
 
     <div class="flex flex-col bg-gray-800 text-white p-4 rounded shadow-md">
-        <div class="flex justify-between items-center mb-3">
-            <div class="text-xl font-semibold">
-                {{ reuniao.data|date:"d \D\E F"|upper }} | {{ reuniao.texto|upper }}
+        <form method="post" action="{% url 'update_reuniao' reuniao.pk %}">
+            {% csrf_token %}
+            <div class="flex justify-between items-center mb-3">
+                <div class="text-xl font-semibold">
+                    <input
+                        type="date"
+                        name="data"
+                        value="{{ reuniao.data|date:'Y-m-d' }}"
+                        class="bg-gray-800 text-white border border-gray-300 rounded p-1 w-auto"
+                    />
+                    |
+                    <input
+                        type="text"
+                        name="texto"
+                        value="{{ reuniao.texto|upper }}"
+                        class="bg-gray-800 text-white border border-gray-300 rounded p-1 w-auto"
+                    />
+                </div>
+                <div class="flex items-center space-x-2">
+                    <label for="presidente" class="font-semibold">Presidente:</label>
+                    <input id="presidente" type="text" name="presidente" value="{{ reuniao.presidente|default_if_none:'' }}"
+                        class="bg-gray-800 text-white border border-gray-300 rounded p-1" list="pessoa_list" />
+                    <label for="conselheiro_sala_b" class="font-semibold">Conselheiro Sala B:</label>
+                    <input id="conselheiro_sala_b" type="text" name="conselheiro_sala_b" value="{{ reuniao.conselheiro_sala_b|default_if_none:'' }}"
+                        class="bg-gray-800 text-white border border-gray-300 rounded p-1" list="pessoa_list" />
+                </div>
             </div>
-            <div>
-                <span class="font-semibold">Presidente:</span> {{ reuniao.presidente }}
+            <div class="flex items-center text-sm  mt-6 space-x-2">
+                <label for="cantico_inicial" class="font-semibold w-1/12 ">Cantico Inicial:</label>
+                <input
+                    id="cantico_inicial"
+                    type="text"
+                    name="cantico_inicial"
+                    value="{{ reuniao.cantico_inicial }}"
+                    class="bg-gray-800 text-white border border-gray-300 rounded p-1 w-1/12 "
+                />
+                <label for="cantico_meio" class="font-semibold w-1/12">Cantico Meio:</label>
+                <input
+                    id="cantico_meio"
+                    type="text"
+                    name="cantico_meio"
+                    value="{{ reuniao.cantico_meio }}"
+                    class="bg-gray-800 text-white border border-gray-300 rounded p-1 w-1/12"
+                />
+                <label for="cantico_final" class="font-semibold w-1/12">Cantico Final:</label>
+                <input
+                    id="cantico_final"
+                    type="text"
+                    name="cantico_final"
+                    value="{{ reuniao.cantico_final }}"
+                    class="bg-gray-800 text-white border border-gray-300 rounded p-1 w-1/12"
+                /> 
+                <!-- Oração -->
+                <div class="w-2/12"></div>
+                <label for="oracao_inical" class="font-semibold w-1/12">Oração Inicial:</label>
+                <input id="oracao_inical" type="text" name="oracao_inicial" value="{{ reuniao.oracao_inicial|default_if_none:'' }}"
+                    class="bg-gray-800 text-white border border-gray-300 rounded p-1 w-1/12" list="pessoa_list"/>
+                <label for="oracao_final" class="font-semibold w-1/12">Oração Final:</label>
+                <input id="oracao_final" type="text" name="oracao_final" value="{{ reuniao.oracao_final|default_if_none:'' }}"
+                    class="bg-gray-800 text-white border border-gray-300 rounded p-1 w-1/12" list="pessoa_list"/>
             </div>
-        </div>
-        <div class="flex justify-between text-sm">
-            <div>
-                <span class="font-semibold">Conselheiro Sala B:</span> {{ reuniao.conselheiro_sala_b }}
+            <div class="flex justify-center mt-4">
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none">
+                    Salvar
+                </button>
             </div>
-            <div>
-                <span class="font-semibold">Cantico:</span> {{ reuniao.cantico_inicial }}
-            </div>
-            <div>
-                <span class="font-semibold">Oração:</span> {{ reuniao.oracao_inicial }}
-            </div>
-        </div>
+        </form>
     </div>
 
     <datalist id="pessoa_list">
