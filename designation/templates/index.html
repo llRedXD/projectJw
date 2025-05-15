@@ -10,19 +10,69 @@
   <body class="bg-gray-900">
     <div class="flex flex-col bg-gray-800 text-white p-4 rounded shadow-md">
       <header class="py-4">
-        <h1 class="text-3xl font-bold text-center">Tela de Reuniões</h1>
+        <h1 class="text-3xl font-bold text-center">Lista de Reuniões</h1>
       </header>
+      <button id="openModal" class="mb-4 p-2 bg-blue-600 hover:bg-blue-500 text-white rounded">
+        Adicionar Reunião
+      </button>
+
+      <div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-gray-800 text-white p-6 rounded shadow-lg w-96">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Nova Reunião</h2>
+            <button id="closeModal" class="text-gray-400 hover:text-gray-200">Fechar</button>
+          </div>
+          <form method="POST" action="{% url 'create_reuniao' %}">
+            {% csrf_token %}
+            <div class="mb-4">
+              <label for="data" class="block mb-1">Data</label>
+              <input type="date" id="data" name="data" class="w-full p-2 rounded bg-gray-700 text-white" required>
+            </div>
+            <div class="mb-4">
+              <label for="texto" class="block mb-1">Texto</label>
+              <input type="text" id="texto" name="texto" class="w-full p-2 rounded bg-gray-700 text-white" required>
+            </div>
+            <div class="flex justify-end">
+              <button type="submit" class="p-2 bg-green-600 hover:bg-green-500 rounded">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <script>
+        const openModal = document.getElementById('openModal');
+        const closeModal = document.getElementById('closeModal');
+        const modal = document.getElementById('modal');
+
+        openModal.addEventListener('click', () => {
+          modal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', () => {
+          modal.classList.add('hidden');
+        });
+
+        window.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.add('hidden');
+          }
+        });
+      </script>
     </div>
     <div class="grid grid-cols-1 gap-4 mt-6 p-2">
       {% for r in reuniao %}
-        <a href="{% url 'reuniao' r.pk %}" class="block p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition-colors">
-          <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold">{{ r }}</h2>
-            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </div>
-        </a>
+        {% if today > r.data   %}
+          <a href="{% url 'reuniao' r.pk %}" class="block p-4 bg-red-700 rounded-lg shadow hover:bg-red-600 transition-colors">
+        {% else %}
+          <a href="{% url 'reuniao' r.pk %}" class="block p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition-colors">
+        {% endif %}
+            <div class="flex items-center justify-between text-white">
+              <h2 class="text-xl font-semibold">{{ r.data|date:"d \D\E F"|upper }} | {{ r.texto|upper }}</h2>
+              <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </a>
       {% empty %}
         <p class="text-gray-400">Nenhuma reunião disponível.</p>
       {% endfor %}

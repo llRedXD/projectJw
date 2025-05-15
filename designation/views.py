@@ -1,3 +1,4 @@
+from datetime import date
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 from django.contrib import messages
@@ -15,8 +16,9 @@ def index(request):
       - request: objeto HttpRequest
       - error: mensagem de erro opcional
     """
-    reunioes = Reuniao.objects.all()
-    return render(request, "index.html", {"reuniao": reunioes})
+    reunioes = Reuniao.objects.all().order_by("data")
+    today = date.today()
+    return render(request, "index.html", {"reuniao": reunioes, "today": today})
 
 
 def reuniao(request, reuniao_id):
@@ -58,6 +60,27 @@ def reuniao(request, reuniao_id):
 #   ┌─────────────────────────────────────────────────────────────────────────┐
 #  | Operações CRUD sobre Reunião                                            │
 # └─────────────────────────────────────────────────────────────────────────┘
+def create_reuniao(request):
+    """
+    Cria uma nova reunião.
+    - Verifica se o ID da reunião é válido.
+    - Cria uma nova reunião com os dados do formulário.
+    """
+    if request.method != "POST":
+        return redirect("index")
+    try:
+        reuniao = Reuniao(
+            texto=request.POST.get("texto"),
+            data=request.POST.get("data"),
+        )
+        reuniao.full_clean()
+        reuniao.save()
+        return redirect("reuniao", reuniao.pk)
+    except Exception as e:
+        messages.error(request, "Erro ao criar reunião: " + str(e))
+        return redirect("index")
+
+
 def update_reuniao(request, pk):
     """
     Atualiza os campos de uma reunião existente.

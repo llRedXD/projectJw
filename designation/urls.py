@@ -11,6 +11,11 @@ urlpatterns = [
         name="update_reuniao",
     ),
     path(
+        "reuniao/create_reuniao/",
+        views.create_reuniao,
+        name="create_reuniao",
+    ),
+    path(
         "reuniao/<int:pk>/update_parte/",
         views.update_parte,
         name="update_parte",

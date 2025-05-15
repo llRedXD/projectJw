@@ -16,20 +16,36 @@ class Pessoa(models.Model):
 class Reuniao(models.Model):
     data = models.DateField()
     texto = models.CharField(max_length=100)
-    cantico_inicial = models.CharField(max_length=100, default=0)
-    cantico_meio = models.CharField(max_length=100, default=0)
-    cantico_final = models.CharField(max_length=100, default=0)
+    cantico_inicial = models.CharField(max_length=100, null=True, blank=True)
+    cantico_meio = models.CharField(max_length=100, null=True, blank=True)
+    cantico_final = models.CharField(max_length=100, null=True, blank=True)
     oracao_inicial = models.ForeignKey(
-        Pessoa, on_delete=models.CASCADE, related_name="oracao_inicial", null=True
+        Pessoa,
+        on_delete=models.CASCADE,
+        related_name="oracao_inicial",
+        null=True,
+        blank=True,
     )
     oracao_final = models.ForeignKey(
-        Pessoa, on_delete=models.CASCADE, related_name="oracao_final", null=True
+        Pessoa,
+        on_delete=models.CASCADE,
+        related_name="oracao_final",
+        null=True,
+        blank=True,
     )
     presidente = models.ForeignKey(
-        Pessoa, on_delete=models.CASCADE, related_name="presidente", null=True
+        Pessoa,
+        on_delete=models.CASCADE,
+        related_name="presidente",
+        null=True,
+        blank=True,
     )
     conselheiro_sala_b = models.ForeignKey(
-        Pessoa, on_delete=models.CASCADE, related_name="conselheiro_sala_b", null=True
+        Pessoa,
+        on_delete=models.CASCADE,
+        related_name="conselheiro_sala_b",
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
@@ -47,7 +63,7 @@ class Parte(models.Model):
     numero_parte = models.PositiveIntegerField()
     trecho = models.CharField(
         max_length=50,
-        choices=Trecho.choices,
+        choices=Trecho.choices,  # type: ignore
     )
     nome_parte = models.CharField(max_length=100, blank=True, null=True)
     ponto_parte = models.CharField(max_length=100, blank=True, null=True)
