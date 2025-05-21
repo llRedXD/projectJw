@@ -9,3 +9,9 @@
     --color-vida-crista: #bf2f13;
   }
 }
+
+@layer components {
+  .bloco_detalhe {
+    @apply w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2;
+  }
+}

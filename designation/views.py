@@ -1,7 +1,10 @@
 from datetime import date
+from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 from django.contrib import messages
+
+from itertools import zip_longest
 
 from designation.models import Parte, Pessoa, Reuniao
 
@@ -31,15 +34,72 @@ def reuniao(request, reuniao_id):
     """
     try:
         reuniao = get_object_or_404(Reuniao, id=reuniao_id)
+        reuniao_anterior = (
+            Reuniao.objects.filter(data__lt=reuniao.data).order_by("-data").first()
+        )
+        tesouros_anterior = Parte.objects.filter(
+            reuniao=reuniao_anterior, trecho="Tesouros da Palavra de Deus"
+        ).order_by("numero_parte")
+        ministerio_anterior = Parte.objects.filter(
+            reuniao=reuniao_anterior,
+            trecho="Faça seu Melhor no Ministério",
+        ).order_by("numero_parte")
+        vida_crista_anterior = Parte.objects.filter(
+            reuniao=reuniao_anterior, trecho="Nossa Vida Cristã"
+        ).order_by("numero_parte")
+
+        reuniao_posterior = (
+            Reuniao.objects.filter(data__gt=reuniao.data).order_by("data").first()
+        )
+        tesouros_posterior = Parte.objects.filter(
+            reuniao=reuniao_posterior, trecho="Tesouros da Palavra de Deus"
+        ).order_by("numero_parte")
+        ministerio_posterior = Parte.objects.filter(
+            reuniao=reuniao_posterior,
+            trecho="Faça seu Melhor no Ministério",
+        ).order_by("numero_parte")
+        vida_crista_posterior = Parte.objects.filter(
+            reuniao=reuniao_posterior, trecho="Nossa Vida Cristã"
+        ).order_by("numero_parte")
+
         partes = Parte.objects.filter(reuniao=reuniao)
-        tesouros = partes.filter(trecho="Tesouros da Palavra de Deus").order_by(
+        tesouros_atual = partes.filter(trecho="Tesouros da Palavra de Deus").order_by(
             "numero_parte"
         )
-        ministerio = partes.filter(trecho="Faça seu Melhor no Ministério").order_by(
+        ministerio_atual = partes.filter(
+            trecho="Faça seu Melhor no Ministério"
+        ).order_by("numero_parte")
+        vida_crista_atual = partes.filter(trecho="Nossa Vida Cristã").order_by(
             "numero_parte"
         )
-        vida_crista = partes.filter(trecho="Nossa Vida Cristã").order_by("numero_parte")
         pessoas = Pessoa.objects.all()
+
+        # Zipar os querysets para facilitar o acesso
+        tesouros = list(
+            zip_longest(
+                tesouros_atual,
+                tesouros_anterior or [],
+                tesouros_posterior or [],
+                fillvalue=None,
+            )
+        )
+        ministerio = list(
+            zip_longest(
+                ministerio_atual,
+                ministerio_anterior or [],
+                ministerio_posterior or [],
+                fillvalue=None,
+            )
+        )
+        vida_crista = list(
+            zip_longest(
+                vida_crista_atual,
+                vida_crista_anterior or [],
+                vida_crista_posterior or [],
+                fillvalue=None,
+            )
+        )
+
         return render(
             request,
             "reuniao.html",
@@ -50,6 +110,8 @@ def reuniao(request, reuniao_id):
                 "tesouros": tesouros,
                 "ministerio": ministerio,
                 "vida_crista": vida_crista,
+                "reuniao_anterior": reuniao_anterior if reuniao_anterior else None,
+                "reuniao_posterior": reuniao_posterior if reuniao_posterior else None,
             },
         )
     except Exception as e:
@@ -60,7 +122,7 @@ def reuniao(request, reuniao_id):
 #   ┌─────────────────────────────────────────────────────────────────────────┐
 #  | Operações CRUD sobre Reunião                                            │
 # └─────────────────────────────────────────────────────────────────────────┘
-def create_reuniao(request):
+def create_reuniao(request: HttpRequest):
     """
     Cria uma nova reunião.
     - Verifica se o ID da reunião é válido.
@@ -70,7 +132,7 @@ def create_reuniao(request):
         return redirect("index")
     try:
         reuniao = Reuniao(
-            texto=request.POST.get("texto"),
+            texto=request.POST.get("texto").upper(),  # type: ignore
             data=request.POST.get("data"),
         )
         if Reuniao.objects.filter(data=reuniao.data).exists():
