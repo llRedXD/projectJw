@@ -73,12 +73,50 @@ def create_reuniao(request):
             texto=request.POST.get("texto"),
             data=request.POST.get("data"),
         )
+        if Reuniao.objects.filter(data=reuniao.data).exists():
+            messages.error(request, "Já existe uma reunião nesta data.")
+            raise ValueError("Já existe uma reunião nesta data.")
         reuniao.full_clean()
         reuniao.save()
+        partes_to_create_reuniao(reuniao.pk)
         return redirect("reuniao", reuniao.pk)
     except Exception as e:
         messages.error(request, "Erro ao criar reunião: " + str(e))
         return redirect("index")
+
+
+def partes_to_create_reuniao(pk):
+    """
+    Criar as partes Basicas para uma nova reunião.
+
+    Args:
+        request (_type_): request
+        pk (_type_): Primary Key da reunião
+    """
+    partes_tesouros = {1: "", 2: "Joias espirituais", 3: "Leitura da Bíblia"}
+    partes_ministerio = {
+        4: "Iniciando conversas",
+        5: "Cultivando o interesse",
+        6: "Cultivando o interesse",
+    }
+    partes_vida_crista = {7: "", 8: "Estudo da Biblico"}
+    partes = partes_tesouros | partes_ministerio | partes_vida_crista
+    for parte in partes:
+        if parte in partes_tesouros:
+            trecho = "Tesouros da Palavra de Deus"
+        elif parte in partes_ministerio:
+            trecho = "Faça seu Melhor no Ministério"
+        else:
+            trecho = "Nossa Vida Cristã"
+
+        parte = Parte(
+            reuniao=Reuniao.objects.get(pk=pk),
+            numero_parte=parte,
+            nome_parte=partes[parte],
+            trecho=trecho,
+        )
+        parte.full_clean()
+        parte.save()
 
 
 def update_reuniao(request, pk):
