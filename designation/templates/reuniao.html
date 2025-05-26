@@ -194,12 +194,12 @@
                     {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %}
                         <!-- Pessoa B -->
                         <div class="flex items-center space-x-2 w-1/4">
-                            <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                            <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                                 <span class="block font-semibold text-xs">Anterior</span>
                                 {% if parte_ant.pessoa_b %}
-                                    <span class="block text-sm opacity-75">{{ parte_ant.pessoa_b|abreviar }}</span>
+                                    <span class="block text-xs opacity-75">{{ parte_ant.pessoa_b|abreviar }}</span>
                                 {% else %}
-                                    <span class="block text-sm opacity-75">Ninguém</span>
+                                    <span class="block text-xs opacity-75">Ninguém</span>
                                 {% endif %}
                             </div>
                             <input
@@ -210,21 +210,12 @@
                                 placeholder="Pessoa"
                                 list="pessoa_list"
                             />
-                            <button
-                                type="button"
-                                class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
-                                onclick="limpar_campo_pessoa('pessoa_b')"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                            <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                            <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                                 <span class="block font-semibold text-xs">Próximo</span>
                                 {% if parte_pos.pessoa_b %}
-                                    <span class="block text-sm opacity-75">{{ parte_pos.pessoa_b|abreviar }}</span>
+                                    <span class="block text-xs opacity-75">{{ parte_pos.pessoa_b|abreviar }}</span>
                                 {% else %}
-                                    <span class="block text-sm opacity-75">Ninguém</span>
+                                    <span class="block text-xs opacity-75">Ninguém</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -234,12 +225,12 @@
 
                     <!-- Pessoa -->
                     <div class="flex items-center space-x-2 w-1/4">
-                        <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                        <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                             <span class="block font-semibold text-xs">Anterior</span>
                             {% if parte_ant.pessoa %}
-                                <span class="block text-sm opacity-75">{{ parte_ant.pessoa|abreviar }}</span>
+                                <span class="block text-xs opacity-75">{{ parte_ant.pessoa|abreviar }}</span>
                             {% else %}
-                                <span class="block text-sm opacity-75">Ninguém</span>
+                                <span class="block text-xs opacity-75">Ninguém</span>
                             {% endif %}
                         </div>
                         <input
@@ -250,21 +241,12 @@
                             placeholder="Pessoa"
                             list="pessoa_list"
                         />
-                        <button
-                            type="button"
-                            class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
-                            onclick="limpar_campo_pessoa('pessoa')"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                        <div class="bloco-detalhe">
+                        <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                             <span class="block font-semibold text-xs">Próximo</span>
                             {% if parte_pos.pessoa %}
-                                <span class="block text-sm opacity-75">{{ parte_pos.pessoa|abreviar }}</span>
+                                <span class="block text-xs opacity-75">{{ parte_pos.pessoa|abreviar }}</span>
                             {% else %}
-                                <span class="block text-sm opacity-75">Ninguém</span>
+                                <span class="block text-xs opacity-75">Ninguém</span>
                             {% endif %}
                         </div>
                     </div>
@@ -366,12 +348,14 @@
 
                     {% if parte.numero_parte >= 3 and parte.numero_parte <= 7 %}
                         <div class="flex items-center space-x-2 w-1/4">
-                            <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                            <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                                 <span class="block font-semibold text-xs">Anterior</span>
-                                {% if parte_ant.pessoa %}
-                                    <span class="block text-sm opacity-75">{{ parte_ant.pessoa|abreviar }}</span>
+                                {% if parte_ant.pessoa_b %}
+                                    <span class="block text-xs opacity-75">{{ parte_ant.pessoa_b|abreviar }} 
+                                        {% if parte_ant.ajudante_b %}/ {{ parte_ant.ajudante_b|abreviar }}{% endif %}</span>
+
                                 {% else %}
-                                    <span class="block text-sm opacity-75">Ninguém</span>
+                                    <span class="block text-xs opacity-75">Ninguém</span>
                                 {% endif %}
                             </div>
                             <input
@@ -393,33 +377,29 @@
                                     list="pessoa_list"
                                 />
                             {% endif %}
-                            <button
-                                type="button"
-                                class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
-                                onclick="limpar_campo_pessoa('pessoa_b')"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                            <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+
+                            <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                                 <span class="block font-semibold text-xs">Próximo</span>
                                 {% if parte_pos.pessoa %}
-                                    <span class="block text-sm opacity-75">{{ parte_pos.pessoa|abreviar }}</span>
+                                    <span class="block text-xs opacity-75">{{ parte_pos.pessoa_b|abreviar }}
+                                        {% if parte_pos.ajudante_b %}/ {{ parte_pos.ajudante_b|abreviar }}{% endif %}
+                                    </span>
                                 {% else %}
-                                    <span class="block text-sm opacity-75">Ninguém</span>
+                                    <span class="block text-xs opacity-75">Ninguém</span>
                                 {% endif %}
                             </div>
                         </div>
                     {% endif %}
 
                     <div class="flex items-center space-x-2 w-1/4">
-                        <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                        <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                             <span class="block font-semibold text-xs">Anterior</span>
                             {% if parte_ant.pessoa %}
-                                <span class="block text-sm opacity-75">{{ parte_ant.pessoa|abreviar }}</span>
+                                <span class="block text-xs opacity-75">{{ parte_ant.pessoa|abreviar }}
+                                    {% if parte_ant.ajudante %}/ {{ parte_ant.ajudante|abreviar }}{% endif %}
+                                </span>
                             {% else %}
-                                <span class="block text-sm opacity-75">Ninguém</span>
+                                <span class="block text-xs opacity-75">Ninguém</span>
                             {% endif %}
                         </div>
                         <input
@@ -441,21 +421,15 @@
                                 list="pessoa_list"
                             />
                         {% endif %}
-                        <button
-                            type="button"
-                            class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
-                            onclick="limpar_campo_pessoa('pessoa')"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                        <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+
+                        <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                             <span class="block font-semibold text-xs">Próximo</span>
                                 {% if parte_pos.pessoa %}
-                                    <span class="block text-sm opacity-75">{{ parte_pos.pessoa|abreviar }}</span>
+                                    <span class="block text-xs opacity-75">{{ parte_pos.pessoa|abreviar }}
+                                        {% if parte_pos.ajudante %}/ {{ parte_pos.ajudante|abreviar }}{% endif %}
+                                    </span>
                                 {% else %}
-                                    <span class="block text-sm opacity-75">Ninguém</span>
+                                    <span class="block text-xs opacity-75">Ninguém</span>
                                 {% endif %}
                         </div>
                     </div>
@@ -532,15 +506,16 @@
                         </div>
                         <div class="w-1/4"></div>
                         <div class="flex items-center space-x-2 w-1/4">
-                            <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                            <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                                 <span class="block font-semibold text-xs">Anterior</span>
                                 {% if parte_ant.pessoa %}
-                                    <span class="block text-sm opacity-75">{{ parte_ant.pessoa|abreviar }}</span>
+                                    <span class="block text-xs opacity-75">{{ parte_ant.pessoa|abreviar }}</span>
                                 {% else %}
-                                    <span class="block text-sm opacity-75">Ninguém</span>
+                                    <span class="block text-xs opacity-75">Ninguém</span>
                                 {% endif %}
                             </div>
                             <input
+                                id="pessoa_input_{{ parte.pk }}"
                                 type="text"
                                 name="pessoa"
                                 value="{{ parte.pessoa|default_if_none:'' }}"
@@ -548,21 +523,12 @@
                                 placeholder="Pessoa"
                                 list="pessoa_list"
                             />
-                            <button
-                                type="button"
-                                class="bg-red-600 text-white rounded h-8 w-8 flex items-center justify-center"
-                                onclick="limpar_campo_pessoa('pessoa')"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                            <div class="w-1/5 text-center bg-gray-200 text-gray-600 rounded p-2">
+                            <div class="w-2/5 text-center bg-gray-200 text-gray-600 rounded p-2">
                                 <span class="block font-semibold text-xs">Próximo</span>
                                 {% if parte_pos.pessoa %}
-                                    <span class="block text-sm opacity-75">{{ parte_pos.pessoa|abreviar }}</span>
+                                    <span class="block text-xs opacity-75">{{ parte_pos.pessoa|abreviar }}</span>
                                 {% else %}
-                                    <span class="block text-sm opacity-75">Ninguém</span>
+                                    <span class="block text-xs opacity-75">Ninguém</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -586,10 +552,7 @@
     </div>
 
     <script>
-        const limpar_campo_pessoa = (target) => {
-            const field = document.querySelector(`[name="${target}"]`);
-            const id = field.name.split('_').pop();
-            const numero_parte = document.querySelector(`[name="numero_parte_${id}"]`);
+        const limpar_campo_pessoa = (obj) => {
             if (numero_parte.value >= 3 && numero_parte.value <= 7) {
                 let ajudante;
                 if (field.name.includes('_b')) {
@@ -599,7 +562,6 @@
                 }
                 if (ajudante) ajudante.value = "";
             }
-            field.value = "";
         };
 
         const adicionarParte = (trecho) => {
