@@ -3,7 +3,8 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("list_reuniao/", views.reunioes, name="list_reuniao"),
+    path("list_reuniao/<int:mes>/<int:ano>/", views.reunioes, name="list_reuniao"),
     path("reuniao/<int:reuniao_id>/", views.reuniao, name="reuniao"),
     path(
         "reuniao/<int:pk>/update_reuniao/",

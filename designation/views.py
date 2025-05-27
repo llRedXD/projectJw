@@ -12,16 +12,18 @@ from designation.models import Parte, Pessoa, Reuniao
 # ┌───────────────────────────────────────────────────────────────────────────┐
 # │ Views principais                                                         │
 # └───────────────────────────────────────────────────────────────────────────┘
-def index(request):
+def reunioes(request, mes: int | None = None, ano: int | None = None):
     """
     Exibe a lista de todas as reuniões.
     Parâmetros:
       - request: objeto HttpRequest
       - error: mensagem de erro opcional
     """
-    reunioes = Reuniao.objects.all().order_by("data")
+    mes = mes or date.today().month
+    ano = ano or date.today().year
+    reunioes = Reuniao.objects.filter(data__year=ano, data__month=mes).order_by("data")
     today = date.today()
-    return render(request, "index.html", {"reuniao": reunioes, "today": today})
+    return render(request, "list_reunioes.html", {"reuniao": reunioes, "today": today})
 
 
 def reuniao(request, reuniao_id):
@@ -281,6 +283,11 @@ def delete_parte(request, pk):
         parte.delete()
         return redirect("reuniao", reuniao_pk)
     return render(request, "delete_parte.html", {"parte": parte})
+
+
+# ┌───────────────────────────────────────────────────────────────────────────┐
+# │ Adicionar Dados                                                      │
+# └───────────────────────────────────────────────────────────────────────────┘
 
 
 # ┌───────────────────────────────────────────────────────────────────────────┐
