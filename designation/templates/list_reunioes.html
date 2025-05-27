@@ -36,61 +36,9 @@
         <div id="monthYearDisplay" class="px-4 py-2 bg-gray-700 text-white"></div>
         <button id="nextMonth" class="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-r">&gt;</button>
       </div>
-
-      <script>
-        let month_number;
-        let year_number;
-        const monthYearDisplay = document.getElementById('monthYearDisplay');
-        const prevMonth = document.getElementById('prevMonth');
-        const nextMonth = document.getElementById('nextMonth');
-        
-        // Verifica se a URL contém o mês e ano nos segmentos do caminho, por exemplo: "/5/2025/"
-        const pathParts = window.location.pathname.split('/').filter(part => part !== '');
-        let currentDate;
-        if (pathParts.length >= 2) {
-          const monthParam = parseInt(pathParts[1]);
-          const yearParam = parseInt(pathParts[2]);
-          if (!isNaN(monthParam) && !isNaN(yearParam)) {
-            // Cria uma data com o primeiro dia do mês fornecido
-            currentDate = new Date(yearParam, monthParam - 1, 1);
-          } else {
-            currentDate = new Date();
-          }
-        } else {
-          currentDate = new Date();
-        }
-        
-        function updateDisplay() {
-          const month = currentDate.toLocaleString('default', { month: 'long' });
-          const year = currentDate.getFullYear();
-          monthYearDisplay.textContent = month + ' ' + year;
-          // Obtém o número do mês (1-12) para uso futuro
-          const monthNum = currentDate.getMonth() + 1;
-        }
-        
-        prevMonth.addEventListener('click', () => {
-          currentDate.setMonth(currentDate.getMonth() - 1)
-          const month = currentDate.getMonth() + 1; // Ajusta o mês para o formato 1-12
-          const year = currentDate.getFullYear();
-          updateUrl(month, year); // Atualiza a URL com o novo mês e ano
-          updateDisplay();
-        });
-        
-        nextMonth.addEventListener('click', () => {
-          currentDate.setMonth(currentDate.getMonth() + 1)
-          const month = currentDate.getMonth() + 1;
-          const year = currentDate.getFullYear();
-          updateUrl(month, year); // Atualiza a URL com o novo mês e ano
-          updateDisplay();
-        });
-
-        const updateUrl = (month, year) => {
-            window.history.pushState({}, '', `/list_reuniao/${month}/2025/`);
-          window.location.reload(); // Recarrega a página para refletir as mudanças
-        };
-        
-        updateDisplay();
-      </script>
+      <button id="generateFile" class="mb-4 p-2 bg-green-600 hover:bg-green-500 text-white rounded">
+        Gerar Arquivo do Mês
+      </button>
 
       <div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-gray-800 text-white p-6 rounded shadow-lg w-96">
@@ -114,26 +62,6 @@
           </form>
         </div>
       </div>
-
-      <script>
-        const openModal = document.getElementById('openModal');
-        const closeModal = document.getElementById('closeModal');
-        const modal = document.getElementById('modal');
-
-        openModal.addEventListener('click', () => {
-          modal.classList.remove('hidden');
-        });
-
-        closeModal.addEventListener('click', () => {
-          modal.classList.add('hidden');
-        });
-
-        window.addEventListener('click', (e) => {
-          if (e.target === modal) {
-            modal.classList.add('hidden');
-          }
-        });
-      </script>
     </div>
     <div class="grid grid-cols-1 gap-4 mt-6 p-2">
       {% for r in reuniao %}
@@ -153,5 +81,80 @@
         <p class="text-gray-400">Nenhuma reunião disponível.</p>
       {% endfor %}
     </div>
+
+    <script>
+      // filepath: /home/red/workspace/projectJw/designation/templates/list_reunioes.html
+      // Script de manipulação do calendário
+      let month_number;
+      let year_number;
+      const monthYearDisplay = document.getElementById('monthYearDisplay');
+      const prevMonth = document.getElementById('prevMonth');
+      const nextMonth = document.getElementById('nextMonth');
+
+      // Verifica a URL para definir a data atual
+      const pathParts = window.location.pathname.split('/').filter(part => part !== '');
+      let currentDate;
+      if (pathParts.length >= 2) {
+        const monthParam = parseInt(pathParts[1]);
+        const yearParam = parseInt(pathParts[2]);
+        if (!isNaN(monthParam) && !isNaN(yearParam)) {
+          currentDate = new Date(yearParam, monthParam - 1, 1);
+        } else {
+          currentDate = new Date();
+        }
+      } else {
+        currentDate = new Date();
+      }
+
+      function updateDisplay() {
+        const rawMonth = currentDate.toLocaleString('pt-BR', { month: 'long' });
+        const month = rawMonth.charAt(0).toUpperCase() + rawMonth.slice(1);
+        const year = currentDate.getFullYear();
+        monthYearDisplay.textContent = month + ' ' + year;
+      }
+
+      prevMonth.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        const month = currentDate.getMonth() + 1;
+        const year = currentDate.getFullYear();
+        updateUrl(month, year);
+        updateDisplay();
+      });
+
+      nextMonth.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        const month = currentDate.getMonth() + 1;
+        const year = currentDate.getFullYear();
+        updateUrl(month, year);
+        updateDisplay();
+      });
+
+      function updateUrl(month, year) {
+        // Atualiza a URL e recarrega a página
+        window.history.pushState({}, '', `/list_reuniao/${month}/${year}/`);
+        window.location.reload();
+      }
+
+      updateDisplay();
+
+      // Script de gerenciamento do modal
+      const openModal = document.getElementById('openModal');
+      const closeModal = document.getElementById('closeModal');
+      const modal = document.getElementById('modal');
+
+      openModal.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+      });
+
+      closeModal.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      });
+    </script>
   </body>
 </html>
