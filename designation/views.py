@@ -118,7 +118,7 @@ def reuniao(request, reuniao_id):
         )
     except Exception as e:
         messages.error(request, "Erro ao carregar reunião: " + str(e))
-        return redirect("index")
+        return redirect("reuniao")
 
 
 #   ┌─────────────────────────────────────────────────────────────────────────┐
@@ -131,7 +131,7 @@ def create_reuniao(request: HttpRequest):
     - Cria uma nova reunião com os dados do formulário.
     """
     if request.method != "POST":
-        return redirect("index")
+        return redirect("reuniao")
     try:
         reuniao = Reuniao(
             texto=request.POST.get("texto").upper(),  # type: ignore
@@ -146,7 +146,7 @@ def create_reuniao(request: HttpRequest):
         return redirect("reuniao", reuniao.pk)
     except Exception as e:
         messages.error(request, "Erro ao criar reunião: " + str(e))
-        return redirect("index")
+        return redirect("reuniao")
 
 
 def partes_to_create_reuniao(pk):
@@ -288,6 +288,29 @@ def delete_parte(request, pk):
 # ┌───────────────────────────────────────────────────────────────────────────┐
 # │ Adicionar Dados                                                      │
 # └───────────────────────────────────────────────────────────────────────────┘
+def gerar_arquivo(request, mes: int, ano: int):
+    """
+    Gera um arquivo com as reuniões do mês e ano especificados.
+    - Verifica se o mês e ano são válidos.
+    - Retorna um arquivo para download.
+    """
+    try:
+        reunioes = Reuniao.objects.filter(data__year=ano, data__month=mes)
+        if not reunioes.exists():
+            messages.error(request, "Nenhuma reunião encontrada para este mês.")
+            return redirect("list_reuniao")
+        # Aqui você pode implementar a lógica para gerar o arquivo
+        # Exemplo: gerar um CSV ou PDF com os dados das reuniões
+        # ...
+        for reuniao in reunioes.order_by("data"):
+            partes = Parte.objects.filter(reuniao=reuniao).order_by("numero_parte")
+            print(reuniao.__dict__)
+            for parte in partes:
+                print(parte.__dict__)
+        return redirect("list_reuniao")  # Redireciona após gerar o arquivo
+    except Exception as e:
+        messages.error(request, "Erro ao gerar arquivo: " + str(e))
+        return redirect("list_reuniao")
 
 
 # ┌───────────────────────────────────────────────────────────────────────────┐

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang=pt-br
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -155,6 +155,27 @@
           modal.classList.add('hidden');
         }
       });
+
+      // Script para gerar arquivo do mês
+      const generateFile = document.getElementById('generateFile');
+      generateFile.addEventListener('click', () => {
+        fetch(`/gerar_arquivo/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}/`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Erro ao gerar arquivo');
+            }
+            return response.json();
+          })
+          .then(data => {
+            alert('Arquivo gerado com sucesso!');
+          })
+          .catch(error => {
+            console.error('Erro:', error);
+            alert('Falha ao gerar o arquivo. Verifique o console para mais detalhes.');
+          });
+      });
+
+
     </script>
   </body>
 </html>

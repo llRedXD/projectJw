@@ -5,6 +5,9 @@ from django.urls import path
 urlpatterns = [
     path("list_reuniao/", views.reunioes, name="list_reuniao"),
     path("list_reuniao/<int:mes>/<int:ano>/", views.reunioes, name="list_reuniao"),
+    path(
+        "gerar_arquivo/<int:mes>/<int:ano>/", views.gerar_arquivo, name="generate_file"
+    ),
     path("reuniao/<int:reuniao_id>/", views.reuniao, name="reuniao"),
     path(
         "reuniao/<int:pk>/update_reuniao/",
