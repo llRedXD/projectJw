@@ -1,12 +1,27 @@
 from datetime import date
-from django.http import HttpRequest
+from django.http import FileResponse, HttpRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 from django.contrib import messages
 
 from itertools import zip_longest
 
+from docx import Document
+
 from designation.models import Parte, Pessoa, Reuniao
+from designation.services.generate_file import (
+    end_tab5,
+    format_table,
+    get_tab1,
+    get_tab2,
+    get_tab3,
+    get_tab4,
+    get_tab5,
+    get_tables,
+    init_tab3,
+    init_tab4,
+    init_tab5,
+)
 
 
 # ┌───────────────────────────────────────────────────────────────────────────┐
@@ -286,8 +301,8 @@ def delete_parte(request, pk):
 
 
 # ┌───────────────────────────────────────────────────────────────────────────┐
-# │ Adicionar Dados                                                      │
-# └───────────────────────────────────────────────────────────────────────────┘
+# │ Adicionar Dados                                                          │
+# └─────────────────────────────────────────────────────────────────────────┘
 def gerar_arquivo(request, mes: int, ano: int):
     """
     Gera um arquivo com as reuniões do mês e ano especificados.
@@ -299,15 +314,40 @@ def gerar_arquivo(request, mes: int, ano: int):
         if not reunioes.exists():
             messages.error(request, "Nenhuma reunião encontrada para este mês.")
             return redirect("list_reuniao")
-        # Aqui você pode implementar a lógica para gerar o arquivo
-        # Exemplo: gerar um CSV ou PDF com os dados das reuniões
-        # ...
+        doc = Document("django_files/base_file.docx")
+        # print(f"Gerando arquivo para {mes:02d}/{ano}...")
+        count = 0
         for reuniao in reunioes.order_by("data"):
+            doc_tab1, doc_tab2, doc_tab3, doc_tab4, doc_tab5 = get_tables(doc, count)
+            tab1, tab2, tab3, tab4, tab5 = [], [], [], [], []
+            get_tab1(reuniao, tab1)
+            get_tab2(reuniao, tab2)
+            init_tab3(tab3)
+            init_tab4(tab4)
+            init_tab5(reuniao, tab5)
             partes = Parte.objects.filter(reuniao=reuniao).order_by("numero_parte")
-            print(reuniao.__dict__)
             for parte in partes:
-                print(parte.__dict__)
-        return redirect("list_reuniao")  # Redireciona após gerar o arquivo
+                get_tab3(parte, tab3)
+                get_tab4(parte, tab4)
+                get_tab5(parte, tab5)
+            end_tab5(reuniao, tab5)
+            format_table(doc_tab1, tab1, [0, 2, 5])
+            format_table(doc_tab2, tab2, [0, 1, 2, 3])
+            format_table(doc_tab3, tab3)
+            format_table(doc_tab4, tab4)
+            format_table(doc_tab5, tab5)
+            doc.save("django_files/new_file.docx")
+            count += 5
+        return JsonResponse(
+            {"status": "success", "message": "Arquivo gerado com sucesso!"}
+        )
+
+        # return FileResponse(
+        #     open("django_files/base_file.docx", "rb"),
+        #     as_attachment=True,
+        #     filename=f"reunioes_{mes:02d}_{ano}.txt",
+        # )
+        # return redirect("list_reuniao")  # Redireciona após gerar o arquivo
     except Exception as e:
         messages.error(request, "Erro ao gerar arquivo: " + str(e))
         return redirect("list_reuniao")
