@@ -310,14 +310,17 @@
                             class="rounded mb-0 p-2 w-3/5 border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-300"
                         >
                             <option value="" disabled hidden {% if not parte.nome_parte %}selected{% endif %}>Nome da Parte</option>
-                            <option value="Inciando conversas" {% if parte.nome_parte == "Inciando conversas" %}selected{% endif %}>
-                                Inciando conversas
+                            <option value="Iniciando conversas" {% if parte.nome_parte == "Iniciando conversas" %}selected{% endif %}>
+                                Iniciando conversas
                             </option>
                             <option value="Cultivando o interesse" {% if parte.nome_parte == "Cultivando o interesse" %}selected{% endif %}>
                                 Cultivando o interesse
                             </option>
                             <option value="Fazendo discípulos" {% if parte.nome_parte == "Fazendo discípulos" %}selected{% endif %}>
                                 Fazendo discípulos
+                            </option>
+                            <option value="Explicando suas crenças" {% if parte.nome_parte == "Explicando suas crenças" %}selected{% endif %}>
+                                Explicando suas crenças
                             </option>
                             <option value="Discurso" {% if parte.nome_parte == "Discurso" %}selected{% endif %}>
                                 Discurso

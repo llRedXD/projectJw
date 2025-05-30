@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Pessoa(models.Model):
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=100, unique=True)
     publicador = models.BooleanField(default=False)
     indicador = models.BooleanField(default=False)
     leitor_livro = models.BooleanField(default=False)

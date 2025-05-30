@@ -9,7 +9,9 @@ from itertools import zip_longest
 from docx import Document
 
 from designation.models import Parte, Pessoa, Reuniao
+import subprocess
 from designation.services.generate_file import (
+    delete_rest_content,
     end_tab5,
     format_table,
     get_tab1,
@@ -178,7 +180,7 @@ def partes_to_create_reuniao(pk):
         5: "Cultivando o interesse",
         6: "Cultivando o interesse",
     }
-    partes_vida_crista = {7: "", 8: "Estudo da Biblico"}
+    partes_vida_crista = {7: "", 8: "Estudo bíblico de congregação"}
     partes = partes_tesouros | partes_ministerio | partes_vida_crista
     for parte in partes:
         if parte in partes_tesouros:
@@ -212,6 +214,18 @@ def update_reuniao(request, pk):
         reuniao.data = request.POST.get("data")
         reuniao.presidente = get_pessoa(request.POST.get("presidente"))
         reuniao.conselheiro_sala_b = get_pessoa(request.POST.get("conselheiro_sala_b"))
+        reuniao.cantico_inicial = request.POST.get(
+            "cantico_inicial", reuniao.cantico_inicial
+        )
+        reuniao.cantico_meio = request.POST.get("cantico_meio", reuniao.cantico_meio)
+        reuniao.cantico_final = request.POST.get("cantico_final", reuniao.cantico_final)
+        reuniao.oracao_inicial = get_pessoa(
+            request.POST.get("oracao_inicial", reuniao.oracao_inicial)
+        )
+        reuniao.oracao_final = get_pessoa(
+            request.POST.get("oracao_final", reuniao.oracao_final)
+        )
+        reuniao.full_clean()  # Valida os campos
         reuniao.save()
         return redirect("reuniao", pk)
     except Exception as e:
@@ -336,18 +350,20 @@ def gerar_arquivo(request, mes: int, ano: int):
             format_table(doc_tab3, tab3)
             format_table(doc_tab4, tab4)
             format_table(doc_tab5, tab5)
-            doc.save("django_files/new_file.docx")
             count += 5
-        return JsonResponse(
-            {"status": "success", "message": "Arquivo gerado com sucesso!"}
+        delete_rest_content(doc, count)
+        doc.save("django_files/new_file.docx")
+
+        # return JsonResponse(
+        #     {"status": "success", "message": "Arquivo gerado com sucesso!"}
+        # )
+
+        return FileResponse(
+            open("django_files/new_file.docx", "rb"),
+            as_attachment=True,
+            filename=f"Programação Reunião do Meio de Semana {mes:02d}-{ano}.docx",
         )
 
-        # return FileResponse(
-        #     open("django_files/base_file.docx", "rb"),
-        #     as_attachment=True,
-        #     filename=f"reunioes_{mes:02d}_{ano}.txt",
-        # )
-        # return redirect("list_reuniao")  # Redireciona após gerar o arquivo
     except Exception as e:
         messages.error(request, "Erro ao gerar arquivo: " + str(e))
         return redirect("list_reuniao")

@@ -23,6 +23,16 @@ month_mapping = {
 }
 
 
+def abreviar(nome: str) -> str:
+    """
+    Se o nome tiver 2+ palavras retorna 'PrimeiroNome I.' senão devolve como está.
+    """
+    partes = nome.split()
+    if len(partes) >= 2:
+        return f"{partes[0]} {partes[1][0]}."
+    return nome
+
+
 def multi_append(lst, value, count):
     for _ in range(count):
         lst.append(value)
@@ -49,10 +59,10 @@ def get_tab1(reuniao: Reuniao, tab):
 
 
 def get_tab2(reuniao: Reuniao, tab):
-    tab.append(f"Cantico: {reuniao.cantico_inicial}")
+    tab.append(f"Cântico: {reuniao.cantico_inicial}")
     tab.append("Oração")
     tab.append(reuniao.oracao_inicial)
-    tab.append("Comentarios Iniciais 1 (min)")
+    tab.append("Comentários Iniciais 1 (min)")
 
 
 def init_tab3(tab):
@@ -87,13 +97,15 @@ def init_tab4(tab):
 
 
 def get_tab4(parte: Parte, tab):
-    nome_pessoa = parte.pessoa.nome if parte.pessoa else ""
-    nome_pessoa_b = parte.pessoa_b.nome if parte.pessoa_b else ""  # Pessoa for Sala B
+    nome_pessoa = abreviar(parte.pessoa.nome) if parte.pessoa else ""
+    nome_pessoa_b = (
+        abreviar(parte.pessoa_b.nome) if parte.pessoa_b else ""
+    )  # Pessoa for Sala B
     ajudante = (
-        parte.ajudante.nome if parte.ajudante else ""
+        abreviar(parte.ajudante.nome) if parte.ajudante else ""
     )  # Ajudante for Sala Principal
     ajudante_b = (
-        parte.ajudante_b.nome if parte.ajudante_b else ""
+        abreviar(parte.ajudante_b.nome) if parte.ajudante_b else ""
     )  # Ajudante for Sala B
     if (
         parte.numero_parte in [4, 5, 6, 7]
@@ -116,7 +128,7 @@ def get_tab4(parte: Parte, tab):
 def init_tab5(reuniao: Reuniao, tab):
     tab.append("NOSSA VIDA CRISTÃ")
     multi_append(tab, "", 2)
-    multi_append(tab, f"Cantico {reuniao.cantico_meio}", 3)
+    multi_append(tab, f"Cântico {reuniao.cantico_meio}", 3)
 
 
 def get_tab5(parte: Parte, tab):
@@ -130,12 +142,12 @@ def get_tab5(parte: Parte, tab):
         tab.append(f"{nome_pessoa}")
 
 
-def end_tab5(reuniao, tab):
+def end_tab5(reuniao: Reuniao, tab):
     multi_append(tab, "Comentários finais (3 min)", 2)
     tab.append("")
-    tab.append(f"Cantico: {reuniao['cantico_final']}")
+    tab.append(f"Cântico: {reuniao.cantico_final}")
     tab.append("Oração:")
-    tab.append(reuniao["oracao_final_id"])
+    tab.append(reuniao.oracao_final)
 
 
 def get_tables(doc, base_index):
@@ -147,10 +159,24 @@ def get_tables(doc, base_index):
     return tables
 
 
+def delete_rest_content(doc, base_index):
+    total_tables = len(doc.tables)
+    for i in reversed(range(base_index, total_tables)):
+        table = doc.tables[i]
+        table._element.getparent().remove(table._element)
+
+
 def format_table(table, tab_data, cell_selected=None):
     count = 0
+    if len(tab_data) == 12 or len(tab_data) == 18:
+        # Remove a linha 5 da tabela (índice 4) no caso a parte adicional do modelo base
+        row_to_remove = table.rows[4]
+        table._tbl.remove(row_to_remove._tr)
     for row in table.rows:
         for cell in row.cells:
+            if cell.text == "Estudante:":
+                count += 1
+                continue
             if cell_selected:
                 if count not in cell_selected:
                     count += 1
@@ -177,7 +203,10 @@ def format_table(table, tab_data, cell_selected=None):
                             # Create a new run for the remaining text with modifications
                             new_run = paragraph.add_run(second_part)
                             new_run.font.name = current_font_name
-                            new_run.font.size = Pt(11)
+                            if len(second_part) > 45:
+                                new_run.font.size = Pt(9)
+                            else:
+                                new_run.font.size = Pt(11)
                             new_run.font.color.rgb = RGBColor(0, 0, 0)
                         else:
                             run.text = txt

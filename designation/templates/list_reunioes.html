@@ -159,21 +159,30 @@
       // Script para gerar arquivo do mês
       const generateFile = document.getElementById('generateFile');
       generateFile.addEventListener('click', () => {
-        fetch(`/gerar_arquivo/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}/`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Erro ao gerar arquivo');
-            }
-            return response.json();
-          })
-          .then(data => {
-            alert('Arquivo gerado com sucesso!');
-          })
-          .catch(error => {
-            console.error('Erro:', error);
-            alert('Falha ao gerar o arquivo. Verifique o console para mais detalhes.');
-          });
-      });
+          fetch(`/gerar_arquivo/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}/`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Erro ao gerar arquivo');
+              }
+              return response.blob();
+            })
+            .then(blob => {
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+                const rawMonthName = currentDate.toLocaleString('pt-BR', { month: 'long' });
+                const monthName = rawMonthName.charAt(0).toUpperCase() + rawMonthName.slice(1);
+                link.setAttribute('download', `Programação Reunião do Meio de Semana ${monthName} - ${currentDate.getFullYear()}.docx`);
+              document.body.appendChild(link);
+              link.click();
+              link.parentNode.removeChild(link);
+              window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+              console.error('Erro:', error);
+              alert('Falha ao gerar o arquivo. Verifique o console para mais detalhes.');
+            });
+         });
 
 
     </script>
