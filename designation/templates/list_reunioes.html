@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang=pt-br
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <title>Lista de Reuniões</title>
+  </head>
+  <body class="bg-gray-900">
+    {% if messages %}
+    <div id="errorModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-xl font-bold mb-4">Erro</h3>
+        {% for msg in messages %}
+        <p>{{ msg }}</p>
+        {% endfor %}
+        <button onclick="document.getElementById('errorModal').style.display='none'"
+          class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none">
+          Fechar
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
+
+    <div class="flex flex-col bg-gray-800 text-white p-4 rounded shadow-md">
+      <header class="py-4">
+        <h1 class="text-3xl font-bold text-center">Lista de Reuniões</h1>
+      </header>
+      <button id="openModal" class="mb-4 p-2 bg-blue-600 hover:bg-blue-500 text-white rounded">
+        Adicionar Reunião
+      </button>
+      <div class="flex items-center justify-center mb-4">
+        <button id="prevMonth" class="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-l">&lt;</button>
+        <div id="monthYearDisplay" class="px-4 py-2 bg-gray-700 text-white"></div>
+        <button id="nextMonth" class="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-r">&gt;</button>
+      </div>
+      <button id="generateFile" class="mb-4 p-2 bg-green-600 hover:bg-green-500 text-white rounded">
+        Gerar Arquivo do Mês
+      </button>
+
+      <div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-gray-800 text-white p-6 rounded shadow-lg w-96">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Nova Reunião</h2>
+            <button id="closeModal" class="text-gray-400 hover:text-gray-200">Fechar</button>
+          </div>
+          <form method="POST" action="{% url 'create_reuniao' %}">
+            {% csrf_token %}
+            <div class="mb-4">
+              <label for="data" class="block mb-1">Data</label>
+              <input type="date" id="data" name="data" class="w-full p-2 rounded bg-gray-700 text-white" required>
+            </div>
+            <div class="mb-4">
+              <label for="texto" class="block mb-1">Texto</label>
+              <input type="text" id="texto" name="texto" class="w-full p-2 rounded bg-gray-700 text-white" required>
+            </div>
+            <div class="flex justify-end">
+              <button type="submit" class="p-2 bg-green-600 hover:bg-green-500 rounded">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 gap-4 mt-6 p-2">
+      {% for r in reuniao %}
+        {% if today > r.data   %}
+          <a href="{% url 'reuniao' r.pk %}" class="block p-4 bg-red-700 rounded-lg shadow hover:bg-red-600 transition-colors">
+        {% else %}
+          <a href="{% url 'reuniao' r.pk %}" class="block p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition-colors">
+        {% endif %}
+            <div class="flex items-center justify-between text-white">
+              <h2 class="text-xl font-semibold">{{ r.data|date:"d \D\E F"|upper }} | {{ r.texto|upper }}</h2>
+              <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </a>
+      {% empty %}
+        <p class="text-gray-400">Nenhuma reunião disponível.</p>
+      {% endfor %}
+    </div>
+
+    <script>
+      // filepath: /home/red/workspace/projectJw/designation/templates/list_reunioes.html
+      // Script de manipulação do calendário
+      let month_number;
+      let year_number;
+      const monthYearDisplay = document.getElementById('monthYearDisplay');
+      const prevMonth = document.getElementById('prevMonth');
+      const nextMonth = document.getElementById('nextMonth');
+
+      // Verifica a URL para definir a data atual
+      const pathParts = window.location.pathname.split('/').filter(part => part !== '');
+      let currentDate;
+      if (pathParts.length >= 2) {
+        const monthParam = parseInt(pathParts[1]);
+        const yearParam = parseInt(pathParts[2]);
+        if (!isNaN(monthParam) && !isNaN(yearParam)) {
+          currentDate = new Date(yearParam, monthParam - 1, 1);
+        } else {
+          currentDate = new Date();
+        }
+      } else {
+        currentDate = new Date();
+      }
+
+      function updateDisplay() {
+        const rawMonth = currentDate.toLocaleString('pt-BR', { month: 'long' });
+        const month = rawMonth.charAt(0).toUpperCase() + rawMonth.slice(1);
+        const year = currentDate.getFullYear();
+        monthYearDisplay.textContent = month + ' ' + year;
+      }
+
+      prevMonth.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        const month = currentDate.getMonth() + 1;
+        const year = currentDate.getFullYear();
+        updateUrl(month, year);
+        updateDisplay();
+      });
+
+      nextMonth.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        const month = currentDate.getMonth() + 1;
+        const year = currentDate.getFullYear();
+        updateUrl(month, year);
+        updateDisplay();
+      });
+
+      function updateUrl(month, year) {
+        // Atualiza a URL e recarrega a página
+        window.history.pushState({}, '', `/list_reuniao/${month}/${year}/`);
+        window.location.reload();
+      }
+
+      updateDisplay();
+
+      // Script de gerenciamento do modal
+      const openModal = document.getElementById('openModal');
+      const closeModal = document.getElementById('closeModal');
+      const modal = document.getElementById('modal');
+
+      openModal.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+      });
+
+      closeModal.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      });
+
+      // Script para gerar arquivo do mês
+      const generateFile = document.getElementById('generateFile');
+      generateFile.addEventListener('click', () => {
+          fetch(`/gerar_arquivo/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}/`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Erro ao gerar arquivo');
+              }
+              return response.blob();
+            })
+            .then(blob => {
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+                const rawMonthName = currentDate.toLocaleString('pt-BR', { month: 'long' });
+                const monthName = rawMonthName.charAt(0).toUpperCase() + rawMonthName.slice(1);
+                link.setAttribute('download', `Programação Reunião do Meio de Semana ${monthName} - ${currentDate.getFullYear()}.docx`);
+              document.body.appendChild(link);
+              link.click();
+              link.parentNode.removeChild(link);
+              window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+              console.error('Erro:', error);
+              alert('Falha ao gerar o arquivo. Verifique o console para mais detalhes.');
+            });
+         });
+
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-tesouro: #3c7f8b;
+    --color-minesterio: #d68f00;
+    --color-vida-crista: #bf2f13;
+  }
+}
