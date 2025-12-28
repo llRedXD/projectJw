@@ -1,5 +1,5 @@
 from datetime import date
-from django.http import FileResponse, HttpRequest, JsonResponse
+from django.http import FileResponse, HttpRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 from django.contrib import messages
@@ -9,7 +9,6 @@ from itertools import zip_longest
 from docx import Document
 
 from designation.models import Parte, Pessoa, Reuniao
-import subprocess
 from designation.services.generate_file import (
     delete_rest_content,
     end_tab5,
@@ -93,30 +92,36 @@ def reuniao(request, reuniao_id):
         )
         pessoas = Pessoa.objects.all()
 
-        # Zipar os querysets para facilitar o acesso
-        tesouros = list(
-            zip_longest(
-                tesouros_atual,
-                tesouros_anterior or [],
-                tesouros_posterior or [],
-                fillvalue=None,
-            )
+        # Padroniza o tamanho das listas com base na lista atual
+        def padronizar_listas(atual, anterior, posterior):
+            atual = list(atual)
+            anterior = list(anterior)
+            posterior = list(posterior)
+            tam = len(atual)
+            anterior = anterior[:tam] + [None] * (tam - len(anterior))
+            posterior = posterior[:tam] + [None] * (tam - len(posterior))
+            return atual, anterior, posterior
+
+        tesouros_atual, tesouros_anterior, tesouros_posterior = padronizar_listas(
+            tesouros_atual, tesouros_anterior or [], tesouros_posterior or []
         )
-        ministerio = list(
-            zip_longest(
-                ministerio_atual,
-                ministerio_anterior or [],
-                ministerio_posterior or [],
-                fillvalue=None,
-            )
+        ministerio_atual, ministerio_anterior, ministerio_posterior = padronizar_listas(
+            ministerio_atual, ministerio_anterior or [], ministerio_posterior or []
         )
-        vida_crista = list(
-            zip_longest(
+        vida_crista_atual, vida_crista_anterior, vida_crista_posterior = (
+            padronizar_listas(
                 vida_crista_atual,
                 vida_crista_anterior or [],
                 vida_crista_posterior or [],
-                fillvalue=None,
             )
+        )
+
+        tesouros = list(zip(tesouros_atual, tesouros_anterior, tesouros_posterior))
+        ministerio = list(
+            zip(ministerio_atual, ministerio_anterior, ministerio_posterior)
+        )
+        vida_crista = list(
+            zip(vida_crista_atual, vida_crista_anterior, vida_crista_posterior)
         )
 
         return render(
